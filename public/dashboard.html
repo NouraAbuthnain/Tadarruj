@@ -1,0 +1,2389 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>تدرج | Dashboard</title>
+<style>
+/* ════════════════════════════════════════════════
+   TADARRUJ DASHBOARD — Standalone file
+   Shares design tokens with landing page (index.html)
+   Stack: vanilla HTML/CSS/JS (no framework)
+   ════════════════════════════════════════════════ */
+
+/* ─── 1. DESIGN TOKENS (mirror of landing) ─── */
+:root {
+  --b50:#eef3ff;--b100:#dde8ff;--b200:#b8cfff;--b300:#7aaaff;
+  --b400:#5b8cf8;--b500:#3a6ef0;--b600:#2c5ee8;--b700:#1e46c0;
+  --b800:#163599;--b900:#0d1f5c;
+  --n0:#fff;--n50:#f8fafc;--n100:#f1f5f9;--n200:#e2e8f0;
+  --n300:#cbd5e1;--n400:#94a3b8;--n500:#64748b;--n600:#475569;
+  --n700:#334155;--n800:#1e293b;--n900:#0f172a;
+  --bg:var(--n50);--surface:var(--n0);--surface2:var(--n100);
+  --border:var(--n200);--text:var(--n900);--text2:var(--n600);
+  --text3:var(--n400);
+  --primary:var(--b600);--primary-dark:var(--b700);--primary-lite:var(--b100);
+  --green:#22c55e;--green-l:#dcfce7;--green-d:#166534;
+  --yellow:#f59e0b;--yellow-l:#fef3c7;--yellow-d:#92400e;
+  --red:#ef4444;--red-l:#fee2e2;--red-d:#991b1b;
+  --teal:#0d9488;--teal-l:#ccfbf1;
+  --r-xs:4px;--r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;
+  --r-2xl:28px;--r-full:9999px;
+  --sh-xs:0 1px 3px rgba(15,23,42,.07),0 1px 2px rgba(15,23,42,.04);
+  --sh-sm:0 2px 8px rgba(44,94,232,.09),0 1px 3px rgba(15,23,42,.05);
+  --sh-md:0 4px 20px rgba(44,94,232,.13),0 2px 8px rgba(15,23,42,.06);
+  --sh-lg:0 12px 48px rgba(44,94,232,.17),0 4px 16px rgba(15,23,42,.08);
+  --dash-header-h:60px;
+  --dash-nav-w:220px;
+  --dash-nav-w-collapsed:60px;
+  --ease:cubic-bezier(.4,0,.2,1);
+  --dur:.2s;
+  --font-base:'Segoe UI','Tahoma','Arial Unicode MS',system-ui,-apple-system,sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+ul,ol{list-style:none}
+a{color:inherit;text-decoration:none}
+img,svg{display:block;max-width:100%}
+button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit;line-height:inherit;color:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit}
+
+body{
+  font-family:var(--font-base);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4,h5{font-weight:700;line-height:1.25;color:var(--text)}
+p{color:var(--text2);line-height:1.75}
+
+/* ─── BUTTONS ─── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.45rem;
+  font-family:inherit;font-size:.9rem;font-weight:600;
+  padding:.55rem 1.2rem;border-radius:var(--r-md);border:2px solid transparent;
+  white-space:nowrap;cursor:pointer;line-height:1;
+  transition:background var(--dur) var(--ease),color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+.btn:focus-visible{outline:3px solid var(--b400);outline-offset:3px}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 16px rgba(44,94,232,.28)}
+.btn-primary:hover:not(:disabled){background:var(--primary-dark);transform:translateY(-1px)}
+.btn-secondary{background:var(--surface);color:var(--primary);border-color:var(--border);box-shadow:var(--sh-xs)}
+.btn-secondary:hover:not(:disabled){background:var(--primary-lite);border-color:var(--b200)}
+.btn-ghost{background:transparent;color:var(--text2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface2);color:var(--text)}
+.btn-danger{background:transparent;color:var(--red);border-color:var(--red-l)}
+.btn-danger:hover:not(:disabled){background:var(--red-l)}
+.btn-sm{padding:.35rem .85rem;font-size:.8rem;border-radius:var(--r-sm)}
+.btn-xs{padding:.25rem .65rem;font-size:.75rem;border-radius:var(--r-sm)}
+
+/* ─── BADGES ─── */
+.badge{display:inline-flex;align-items:center;font-size:.68rem;font-weight:700;
+  letter-spacing:.03em;padding:.2rem .6rem;border-radius:var(--r-full)}
+.badge-green{background:var(--green-l);color:var(--green-d)}
+.badge-yellow{background:var(--yellow-l);color:var(--yellow-d)}
+.badge-red{background:var(--red-l);color:var(--red-d)}
+.badge-blue{background:var(--b100);color:var(--b700)}
+.badge-teal{background:var(--teal-l);color:var(--teal)}
+.badge-gray{background:var(--n200);color:var(--n700)}
+
+/* ─── PILLS ─── */
+.pill{display:inline-block;font-size:.75rem;font-weight:600;color:var(--primary);
+  background:var(--primary-lite);padding:.28rem .85rem;border-radius:var(--r-full);
+  border:1px solid var(--b200)}
+
+/* ─── TOASTS ─── */
+#toast-container{
+  position:fixed;bottom:1.5rem;inset-inline-end:1.5rem;z-index:9998;
+  display:flex;flex-direction:column;gap:.5rem;pointer-events:none;
+}
+.toast{
+  display:flex;align-items:center;gap:.75rem;padding:.7rem 1.1rem;
+  border-radius:var(--r-lg);box-shadow:var(--sh-lg);font-size:.87rem;font-weight:500;
+  min-width:240px;max-width:360px;pointer-events:all;
+  animation:toast-in .25s ease forwards;
+}
+@keyframes toast-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes toast-out{from{opacity:1}to{opacity:0;transform:translateY(8px)}}
+.toast.leaving{animation:toast-out .22s ease forwards}
+.toast-info{background:#0f172a;color:#93c5fd;border:1px solid var(--b700)}
+.toast-success{background:#0f2a10;color:#86efac;border:1px solid var(--green-d)}
+.toast-warn{background:#2d2010;color:#fcd34d;border:1px solid var(--yellow-d)}
+.toast-error{background:#2d1010;color:#fca5a5;border:1px solid var(--red-d)}
+.toast-x{margin-inline-start:auto;opacity:.55;cursor:pointer;font-size:1rem;line-height:1;flex-shrink:0}
+.toast-x:hover{opacity:1}
+
+/* ─── MODAL ─── */
+.modal-backdrop{
+  display:none;position:fixed;inset:0;z-index:1000;
+  background:rgba(15,23,42,.55);backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:1rem;
+}
+.modal-backdrop.open{display:flex}
+.modal{
+  background:var(--surface);border-radius:var(--r-2xl);box-shadow:var(--sh-lg);
+  width:100%;max-width:440px;max-height:92vh;overflow-y:auto;
+  animation:modal-in .2s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes modal-in{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
+.modal-header{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;
+  padding:1.4rem 1.5rem .75rem;border-bottom:1px solid var(--border);
+}
+.modal-header h3{font-size:1.1rem;margin:0}
+.modal-header p{font-size:.83rem;color:var(--text2);margin:.25rem 0 0}
+.modal-close{
+  width:30px;height:30px;border-radius:var(--r-sm);background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--text3);flex-shrink:0;transition:background var(--dur) var(--ease),color var(--dur) var(--ease);
+  font-size:1.1rem;
+}
+.modal-close:hover{background:var(--n200);color:var(--text)}
+.modal-body{padding:1.25rem 1.5rem}
+.modal-actions{display:flex;flex-direction:column;gap:.55rem;margin-top:1.1rem}
+.modal-actions .btn{width:100%;justify-content:center}
+
+/* ─── FORM FIELDS ─── */
+.form-field{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.9rem}
+.form-field label{font-size:.82rem;font-weight:600;color:var(--text2)}
+.form-field input,.form-field select,.form-field textarea{
+  padding:.62rem .9rem;border:1.5px solid var(--border);border-radius:var(--r-md);
+  background:var(--bg);color:var(--text);font-size:.9rem;font-family:inherit;
+  outline:none;transition:border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);
+}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{
+  border-color:var(--b400);box-shadow:0 0 0 3px rgba(91,140,248,.15);
+}
+.form-field input::placeholder,.form-field textarea::placeholder{color:var(--text3)}
+.form-field select{appearance:none;-webkit-appearance:none;cursor:pointer}
+.select-wrapper{position:relative}
+.select-wrapper select{width:100%;padding-inline-end:2.2rem}
+.select-arrow{position:absolute;inset-inline-end:.7rem;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text3)}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+.form-req{color:var(--primary);margin-inline-start:.2rem;font-weight:700;font-size:.72rem}
+.field-error{display:none;font-size:.73rem;color:var(--red);margin-top:.18rem;font-weight:500}
+.field-error.visible{display:block}
+input.input-error,select.input-error{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(239,68,68,.1)!important}
+
+/* ══════════════════════════════════════════
+   DASHBOARD SHELL LAYOUT
+   ══════════════════════════════════════════ */
+
+/* Header */
+.dash-header{
+  position:fixed;top:0;inset-inline:0;height:var(--dash-header-h);
+  z-index:900;background:rgba(248,250,252,.95);backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--border);
+  box-shadow:var(--sh-xs);
+}
+.dash-header-inner{
+  height:100%;display:flex;align-items:center;justify-content:space-between;
+  padding-inline:1.5rem;gap:1rem;
+}
+
+/* Logo — always on the inline-start edge (right in RTL, left in LTR) */
+.dash-logo{
+  display:inline-flex;align-items:baseline;gap:.4rem;
+  font-weight:900;font-size:1.15rem;flex-shrink:0;text-decoration:none;
+}
+.dash-logo .brand-ar{color:var(--primary)}
+.dash-logo .brand-sep{color:var(--text3);font-weight:300}
+.dash-logo .brand-en{color:var(--text2);font-size:.85rem;font-weight:300;font-style:italic}
+
+/* Actions group — burger + lang + avatar/user + logout/cta */
+.dash-header-actions{
+  display:flex;align-items:center;gap:.6rem;flex-shrink:0;
+}
+
+/* User area containers */
+.dash-user-area{display:flex;align-items:center;gap:.6rem}
+.dash-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--b600),var(--b400));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:.8rem;font-weight:800;flex-shrink:0;letter-spacing:-.02em;
+  border:2px solid var(--b200);
+}
+.dash-avatar-guest{background:linear-gradient(135deg,var(--n400),var(--n500))}
+.dash-user-name{
+  font-size:.85rem;font-weight:600;color:var(--text);
+  max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Lang toggle */
+.lang-btn{
+  font-size:.75rem;font-weight:700;color:var(--text2);
+  padding:.3rem .8rem;border-radius:var(--r-full);
+  border:1.5px solid var(--border);background:var(--surface);
+  letter-spacing:.04em;transition:all var(--dur) var(--ease);
+  flex-shrink:0;
+}
+.lang-btn:hover{color:var(--primary);border-color:var(--primary);background:var(--primary-lite)}
+
+/* Logout button */
+.dash-logout-btn{
+  display:flex;align-items:center;gap:.4rem;flex-shrink:0;
+  font-size:.8rem;font-weight:600;color:var(--text2);
+  padding:.3rem .85rem;border-radius:var(--r-md);
+  border:1.5px solid var(--border);background:var(--surface);
+  transition:all var(--dur) var(--ease);
+}
+.dash-logout-btn:hover{color:var(--red);border-color:var(--red-l);background:var(--red-l)}
+
+/* Login CTA (guest header) */
+.dash-login-cta{
+  flex-shrink:0;font-size:.82rem;font-weight:700;color:#fff;
+  padding:.32rem 1rem;border-radius:var(--r-md);background:var(--primary);
+  box-shadow:0 3px 12px rgba(44,94,232,.25);
+  transition:all var(--dur) var(--ease);border:none;
+}
+.dash-login-cta:hover{background:var(--primary-dark);transform:translateY(-1px)}
+
+/* Divider between lang and user group */
+.dash-header-divider{
+  width:1px;height:20px;background:var(--border);flex-shrink:0;
+}
+
+/* Mobile burger — hidden on desktop, shown on mobile */
+.dash-burger{
+  display:none;flex-direction:column;gap:4px;padding:.35rem;
+  border-radius:var(--r-sm);transition:background var(--dur) var(--ease);flex-shrink:0;
+}
+.dash-burger:hover{background:var(--surface2)}
+.dash-burger span{
+  display:block;width:20px;height:2px;background:var(--text);border-radius:2px;
+  transition:transform var(--dur) var(--ease),opacity var(--dur) var(--ease);
+}
+.dash-burger[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.dash-burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.dash-burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+/* ─── SIDEBAR NAV ─── */
+.dash-sidebar{
+  position:fixed;top:var(--dash-header-h);inset-inline-start:0;
+  width:var(--dash-nav-w);height:calc(100vh - var(--dash-header-h));
+  background:var(--surface);border-inline-end:1px solid var(--border);
+  padding:1.25rem .75rem;display:flex;flex-direction:column;gap:.25rem;
+  overflow-y:auto;z-index:800;
+  transition:transform .25s var(--ease),width .25s var(--ease);
+}
+.dash-sidebar.collapsed{width:var(--dash-nav-w-collapsed)}
+
+.nav-label{
+  font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text3);padding:.3rem .65rem .15rem;margin-top:.5rem;
+}
+.nav-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.62rem .85rem;border-radius:var(--r-md);
+  font-size:.88rem;font-weight:500;color:var(--text2);
+  cursor:pointer;transition:background var(--dur) var(--ease),color var(--dur) var(--ease);
+  white-space:nowrap;border:none;background:none;font-family:inherit;width:100%;
+  text-align:start;
+}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--primary-lite);color:var(--primary);font-weight:600}
+.nav-item.active .nav-icon{color:var(--primary)}
+.nav-icon{font-size:1.15rem;flex-shrink:0;width:22px;text-align:center}
+.nav-text{}
+
+/* Sidebar toggle */
+.sidebar-toggle-btn{
+  display:flex;align-items:center;justify-content:center;
+  margin-top:auto;padding:.5rem;border-radius:var(--r-md);
+  color:var(--text3);transition:all var(--dur) var(--ease);
+  font-size:.75rem;gap:.4rem;
+}
+.sidebar-toggle-btn:hover{background:var(--surface2);color:var(--text)}
+
+/* ─── MAIN CONTENT ─── */
+.dash-main{
+  margin-inline-start:var(--dash-nav-w);
+  margin-block-start:var(--dash-header-h);
+  min-height:calc(100vh - var(--dash-header-h));
+  padding:2rem;transition:margin-inline-start .25s var(--ease);
+}
+.dash-main.sidebar-collapsed{margin-inline-start:var(--dash-nav-w-collapsed)}
+
+/* ─── PAGE ─── */
+.dash-page{display:none}
+.dash-page.active{display:block}
+
+/* ─── PAGE HEADER ─── */
+.page-hdr{margin-bottom:2rem}
+.page-hdr-eyebrow{display:inline-block;font-size:.7rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--primary);
+  background:var(--primary-lite);padding:.25rem .8rem;border-radius:var(--r-full);margin-bottom:.6rem}
+.page-hdr h1{font-size:clamp(1.5rem,3vw,2rem);margin-bottom:.4rem}
+.page-hdr p{font-size:.95rem;max-width:580px;color:var(--text2)}
+
+/* ─── CARDS ─── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-xl);padding:1.4rem;
+}
+.card-hover{transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease),border-color var(--dur) var(--ease)}
+.card-hover:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:var(--b200)}
+
+/* ─── EMPTY STATE ─── */
+.empty-state{
+  text-align:center;padding:3.5rem 2rem;
+  display:flex;flex-direction:column;align-items:center;gap:1rem;
+}
+.empty-icon{font-size:3rem;line-height:1;opacity:.6}
+.empty-state h3{font-size:1.05rem;margin-bottom:.25rem}
+.empty-state p{font-size:.88rem;max-width:380px;color:var(--text3)}
+
+/* ─── SECTION TITLE ROW ─── */
+.section-title-row{
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  margin-bottom:1.25rem;flex-wrap:wrap;
+}
+.section-title-row h2{font-size:1.1rem;margin:0}
+
+/* ─── GRIDS ─── */
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem}
+
+/* ══════════════════════════════════════════
+   GUEST GATE BANNER
+   ══════════════════════════════════════════ */
+.gate-banner{
+  display:flex;align-items:center;gap:1rem;
+  background:linear-gradient(135deg,var(--b50),var(--n0));
+  border:1px solid var(--b200);border-radius:var(--r-lg);
+  padding:.9rem 1.25rem;margin-bottom:1.5rem;flex-wrap:wrap;
+}
+.gate-banner-text{flex:1;font-size:.87rem;color:var(--primary);font-weight:500}
+.gate-banner-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* ══════════════════════════════════════════
+   PAGE 1: OPPORTUNITY RADAR
+   ══════════════════════════════════════════ */
+.filter-bar{
+  display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem;
+  align-items:flex-end;
+}
+.filter-bar .form-field{margin-bottom:0;min-width:140px;flex:1}
+
+.opportunity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.1rem}
+.opp-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);
+  padding:1.35rem;display:flex;flex-direction:column;gap:.85rem;
+  transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease),border-color var(--dur) var(--ease);
+}
+.opp-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:var(--b200)}
+.opp-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem}
+.opp-card-icon{
+  font-size:1.5rem;width:46px;height:46px;border-radius:var(--r-lg);
+  background:var(--primary-lite);display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.opp-card h3{font-size:.95rem;font-weight:700;margin:0;line-height:1.35}
+.opp-card-org{font-size:.78rem;color:var(--text3);margin-top:.15rem}
+.opp-meta{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
+.opp-deadline{font-size:.75rem;font-weight:600}
+.opp-deadline.urgent-red{color:var(--red)}
+.opp-deadline.urgent-yellow{color:var(--yellow-d)}
+.opp-deadline.urgent-green{color:var(--teal)}
+.opp-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.opp-actions .btn{flex:1}
+
+/* ══════════════════════════════════════════
+   PAGE 2: IMPORTANT DATES
+   ══════════════════════════════════════════ */
+.dates-list{display:flex;flex-direction:column;gap:.6rem}
+.date-item{
+  display:flex;align-items:center;gap:1rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:.9rem 1.1rem;transition:box-shadow var(--dur) var(--ease);
+}
+.date-item:hover{box-shadow:var(--sh-sm)}
+.date-urgency{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.urgency-green{background:var(--green)}
+.urgency-yellow{background:var(--yellow)}
+.urgency-red{background:var(--red)}
+.date-body{flex:1;min-width:0}
+.date-title{font-size:.9rem;font-weight:600;color:var(--text)}
+.date-sub{font-size:.77rem;color:var(--text3);margin-top:.1rem}
+.date-countdown{
+  font-size:.75rem;font-weight:700;padding:.22rem .65rem;border-radius:var(--r-full);
+  white-space:nowrap;flex-shrink:0;
+}
+.countdown-green{background:var(--green-l);color:var(--green-d)}
+.countdown-yellow{background:var(--yellow-l);color:var(--yellow-d)}
+.countdown-red{background:var(--red-l);color:var(--red-d)}
+.date-add-btn{
+  width:30px;height:30px;border-radius:var(--r-sm);background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text3);flex-shrink:0;font-size:1rem;
+  transition:all var(--dur) var(--ease);
+}
+.date-add-btn:hover{background:var(--primary-lite);color:var(--primary)}
+.dates-tabs{display:flex;gap:.4rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.dates-tab{
+  padding:.4rem 1rem;border-radius:var(--r-full);border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text2);font-size:.82rem;font-weight:600;cursor:pointer;
+  transition:all var(--dur) var(--ease);
+}
+.dates-tab:hover{border-color:var(--b300);color:var(--primary)}
+.dates-tab.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 3px 12px rgba(44,94,232,.28)}
+
+/* ══════════════════════════════════════════
+   PAGE 3: GOAL GRADES
+   ══════════════════════════════════════════ */
+.goal-grade-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.5rem}
+.goal-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);
+  padding:1.4rem;display:flex;flex-direction:column;gap:1rem;
+}
+.goal-card-header{display:flex;align-items:center;gap:.75rem}
+.goal-icon{font-size:1.6rem;width:48px;height:48px;border-radius:var(--r-lg);
+  background:var(--primary-lite);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.goal-card h3{font-size:1rem;margin:0}
+.goal-card p{font-size:.82rem;color:var(--text3);margin:0}
+.goal-inputs{display:flex;flex-direction:column;gap:.75rem}
+.goal-score-display{
+  text-align:center;padding:1.25rem;
+  background:linear-gradient(135deg,var(--b50),var(--n0));
+  border:1px solid var(--b100);border-radius:var(--r-lg);
+}
+.goal-score-num{font-size:2.5rem;font-weight:900;color:var(--primary);line-height:1}
+.goal-score-label{font-size:.75rem;color:var(--text3);margin-top:.25rem}
+.goal-prog-bar{height:8px;background:var(--surface2);border-radius:var(--r-full);overflow:hidden;margin:.35rem 0}
+.goal-prog-fill{height:100%;border-radius:var(--r-full);background:linear-gradient(90deg,var(--b600),var(--b400));transition:width 1s ease}
+.goal-feedback{
+  font-size:.82rem;padding:.7rem .9rem;border-radius:var(--r-md);
+  background:var(--green-l);color:var(--green-d);font-weight:500;
+}
+.goal-feedback.warn{background:var(--yellow-l);color:var(--yellow-d)}
+.goal-feedback.ok{background:var(--b100);color:var(--b700)}
+
+/* Intensity indicator */
+.intensity-row{display:flex;gap:.4rem}
+.intensity-dot{
+  width:10px;height:10px;border-radius:50%;background:var(--n200);
+  transition:background .3s ease;
+}
+.intensity-dot.filled{background:var(--primary)}
+.intensity-dot.filled.warn{background:var(--yellow)}
+.intensity-dot.filled.high{background:var(--red)}
+
+/* ══════════════════════════════════════════
+   PAGE 4: STUDY PLANNING ENGINE
+   ══════════════════════════════════════════ */
+.planner-layout{display:grid;grid-template-columns:380px 1fr;gap:1.5rem;align-items:start}
+.planner-form-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:1.5rem;
+  position:sticky;top:calc(var(--dash-header-h) + 2rem);
+}
+.planner-form-card h2{font-size:1rem;margin-bottom:1.1rem}
+.planner-result{display:flex;flex-direction:column;gap:1rem}
+.plan-phase{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);
+  padding:1.25rem;
+}
+.plan-phase-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.9rem}
+.plan-phase-icon{
+  width:36px;height:36px;border-radius:var(--r-md);
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;
+}
+.phase-learn{background:#dbeafe;color:#1d4ed8}
+.phase-practice{background:var(--yellow-l);color:var(--yellow-d)}
+.phase-revision{background:var(--teal-l);color:var(--teal)}
+.phase-mock{background:var(--red-l);color:var(--red-d)}
+.phase-buffer{background:var(--n100);color:var(--n600)}
+.plan-phase h3{font-size:.9rem;margin:0}
+.plan-phase-dates{font-size:.75rem;color:var(--text3);margin-top:.1rem}
+.plan-days{display:flex;flex-direction:column;gap:.4rem}
+.plan-day{
+  display:flex;align-items:center;gap:.75rem;padding:.4rem .6rem;
+  border-radius:var(--r-sm);font-size:.82rem;
+}
+.plan-day:nth-child(odd){background:var(--n50)}
+.plan-day-date{font-weight:600;color:var(--text);min-width:80px;flex-shrink:0;font-size:.8rem}
+.plan-day-task{color:var(--text2);flex:1}
+.plan-day-hours{font-size:.75rem;color:var(--text3);flex-shrink:0}
+.plan-summary-bar{
+  display:flex;gap:1rem;background:linear-gradient(135deg,var(--b700),var(--b900));
+  border-radius:var(--r-xl);padding:1.25rem 1.5rem;flex-wrap:wrap;
+}
+.plan-summary-stat{display:flex;flex-direction:column;gap:.2rem;flex:1;min-width:80px}
+.plan-summary-stat span:first-child{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.plan-summary-stat span:last-child{font-size:1.1rem;font-weight:800;color:#fff}
+.recalc-bar{
+  display:flex;align-items:center;gap:.75rem;
+  background:var(--yellow-l);border:1px solid var(--yellow-d);border-radius:var(--r-lg);
+  padding:.75rem 1rem;
+}
+.recalc-bar p{font-size:.83rem;color:var(--yellow-d);flex:1;font-weight:500}
+
+/* ══════════════════════════════════════════
+   PAGE 5: 3-YEAR ROADMAP
+   ══════════════════════════════════════════ */
+.roadmap-layout{display:grid;grid-template-columns:320px 1fr;gap:1.5rem;align-items:start}
+.roadmap-form-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:1.5rem;
+  position:sticky;top:calc(var(--dash-header-h) + 2rem);
+}
+.roadmap-form-card h2{font-size:1rem;margin-bottom:1.1rem}
+.roadmap-timeline{display:flex;flex-direction:column;gap:0}
+.roadmap-year-block{display:flex;gap:1.25rem;position:relative}
+.roadmap-year-block::before{
+  content:'';position:absolute;inset-inline-start:19px;top:44px;bottom:-1px;
+  width:2px;background:var(--border);z-index:0;
+}
+.roadmap-year-block:last-child::before{display:none}
+.roadmap-year-dot{
+  width:40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:800;
+  flex-shrink:0;position:relative;z-index:1;box-shadow:0 0 0 4px var(--b100);margin-top:.25rem;
+}
+.roadmap-year-content{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);
+  padding:1.1rem 1.25rem;margin-bottom:1.25rem;flex:1;
+}
+.roadmap-year-content h3{font-size:.95rem;font-weight:700;margin-bottom:.85rem;color:var(--primary)}
+.roadmap-section{margin-bottom:.85rem}
+.roadmap-section-title{font-size:.72rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--text3);margin-bottom:.4rem}
+.roadmap-items{display:flex;flex-direction:column;gap:.3rem}
+.roadmap-item{
+  display:flex;align-items:center;gap:.55rem;font-size:.83rem;color:var(--text2);
+}
+.roadmap-item::before{
+  content:'';width:5px;height:5px;border-radius:50%;background:var(--b300);flex-shrink:0;
+}
+.roadmap-milestone{
+  display:inline-flex;align-items:center;gap:.35rem;
+  background:var(--primary-lite);color:var(--primary);
+  font-size:.75rem;font-weight:600;padding:.2rem .7rem;
+  border-radius:var(--r-full);margin:.15rem .1rem;
+}
+
+/* ══════════════════════════════════════════
+   MOBILE DRAWER OVERLAY
+   ══════════════════════════════════════════ */
+.sidebar-backdrop{
+  display:none;position:fixed;inset:0;z-index:799;background:rgba(15,23,42,.4);
+}
+.sidebar-backdrop.open{display:block}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════ */
+@media (max-width:1100px){
+  .planner-layout,.roadmap-layout{grid-template-columns:1fr}
+  .planner-form-card,.roadmap-form-card{position:static}
+  .grid-3{grid-template-columns:repeat(2,1fr)}
+  .goal-grade-grid{grid-template-columns:1fr}
+}
+@media (max-width:768px){
+  :root{--dash-nav-w:260px}
+  .dash-sidebar{
+    transform:translateInlineStart(-100%);
+    box-shadow:var(--sh-lg);
+  }
+  [dir="ltr"] .dash-sidebar{transform:translateX(-100%)}
+  [dir="rtl"] .dash-sidebar{transform:translateX(100%)}
+  .dash-sidebar.mobile-open{transform:translateX(0)}
+  .dash-burger{display:flex}
+  .sidebar-toggle-btn{display:none}
+  .dash-main{margin-inline-start:0!important}
+  .dash-user-name{display:none}
+  .dash-header-divider{display:none}
+  .dash-header-actions{gap:.4rem}
+  #logout-btn span{display:none}
+  .grid-3,.grid-2{grid-template-columns:1fr}
+  .form-row-2{grid-template-columns:1fr}
+  .opportunity-grid{grid-template-columns:1fr}
+  .goal-grade-grid{grid-template-columns:1fr}
+  .planner-layout,.roadmap-layout{grid-template-columns:1fr}
+  .dates-tabs{gap:.3rem}
+}
+@media (max-width:480px){
+  .dash-main{padding:1.25rem}
+  .filter-bar .form-field{min-width:100%}
+}
+
+/* ── LTR overrides ── */
+[dir="ltr"] .dash-sidebar{inset-inline-start:0}
+</style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<!-- ══════════════════════════════════════
+     DASHBOARD HEADER
+══════════════════════════════════════ -->
+<header class="dash-header" id="dash-header">
+  <div class="dash-header-inner">
+
+    <!-- Logo — inline-start (right in RTL, left in LTR) -->
+    <a href="#" class="dash-logo" id="logo-link">
+      <span class="brand-ar">تدرج</span>
+      <span class="brand-sep">|</span>
+      <span class="brand-en">Tadarruj</span>
+    </a>
+
+    <!-- Actions group — all items on inline-end side -->
+    <div class="dash-header-actions">
+
+      <!-- Language toggle -->
+      <button class="lang-btn" id="lang-btn" aria-label="Toggle language">English</button>
+
+      <!-- Visual divider -->
+      <div class="dash-header-divider" aria-hidden="true"></div>
+
+      <!-- Account mode: avatar + name + logout -->
+      <div class="dash-user-area" id="user-area-account" style="display:none">
+        <div class="dash-avatar" id="header-avatar">ط</div>
+        <span class="dash-user-name" id="header-name"></span>
+        <button class="dash-logout-btn" id="logout-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span data-i18n="header_logout"></span>
+        </button>
+      </div>
+
+      <!-- Guest mode: guest avatar + login CTA -->
+      <div class="dash-user-area" id="user-area-guest" style="display:none">
+        <div class="dash-avatar dash-avatar-guest" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <button class="dash-login-cta js-open-auth" data-i18n="header_login_cta"></button>
+      </div>
+
+      <!-- Mobile burger — LAST so it sits at the outer edge -->
+      <button class="dash-burger" id="dash-burger" aria-label="Open nav" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+    </div><!-- /.dash-header-actions -->
+  </div>
+</header>
+
+<!-- Sidebar backdrop -->
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+<!-- ══════════════════════════════════════
+     SIDEBAR NAVIGATION
+══════════════════════════════════════ -->
+<nav class="dash-sidebar" id="dash-sidebar" aria-label="Dashboard navigation">
+  <span class="nav-label" data-i18n="nav_section_label"></span>
+  <button class="nav-item active" data-page="radar" id="nav-radar">
+    <span class="nav-icon">🎯</span>
+    <span class="nav-text" data-i18n="nav_radar"></span>
+  </button>
+  <button class="nav-item" data-page="dates" id="nav-dates">
+    <span class="nav-icon">📅</span>
+    <span class="nav-text" data-i18n="nav_dates"></span>
+  </button>
+  <button class="nav-item" data-page="grades" id="nav-grades">
+    <span class="nav-icon">📊</span>
+    <span class="nav-text" data-i18n="nav_grades"></span>
+  </button>
+  <button class="nav-item" data-page="planner" id="nav-planner">
+    <span class="nav-icon">📚</span>
+    <span class="nav-text" data-i18n="nav_planner"></span>
+  </button>
+  <button class="nav-item" data-page="roadmap" id="nav-roadmap">
+    <span class="nav-icon">🗺️</span>
+    <span class="nav-text" data-i18n="nav_roadmap"></span>
+  </button>
+
+  <button class="sidebar-toggle-btn" id="sidebar-toggle">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="sidebar-toggle-icon"><polyline points="15 18 9 12 15 6"/></svg>
+    <span id="sidebar-toggle-text" data-i18n="sidebar_collapse"></span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════ -->
+<main class="dash-main" id="dash-main">
+
+  <!-- ── PAGE: Opportunity Radar ── -->
+  <div class="dash-page active" id="page-radar">
+    <div class="page-hdr">
+      <div class="page-hdr-eyebrow" data-i18n="nav_radar"></div>
+      <h1 data-i18n="radar_title"></h1>
+      <p data-i18n="radar_sub"></p>
+    </div>
+
+    <!-- Guest gate -->
+    <div class="gate-banner" id="radar-gate" style="display:none">
+      <div class="gate-banner-text">
+        <span data-i18n="gate_msg_radar"></span>
+      </div>
+      <div class="gate-banner-actions">
+        <button class="btn btn-primary btn-sm js-open-auth" data-i18n="gate_create"></button>
+        <button class="btn btn-secondary btn-sm js-open-auth-login" data-i18n="gate_login"></button>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar" id="radar-filters">
+      <div class="form-field">
+        <label data-i18n="filter_city"></label>
+        <div class="select-wrapper">
+          <select id="filter-city">
+            <option value="" data-i18n="filter_all"></option>
+            <option value="riyadh" data-i18n="city_riyadh"></option>
+            <option value="jeddah" data-i18n="city_jeddah"></option>
+            <option value="mecca" data-i18n="city_mecca"></option>
+            <option value="dammam" data-i18n="city_dammam"></option>
+            <option value="other" data-i18n="filter_other_city"></option>
+          </select>
+          <svg class="select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="form-field">
+        <label data-i18n="filter_grade"></label>
+        <div class="select-wrapper">
+          <select id="filter-grade">
+            <option value="" data-i18n="filter_all"></option>
+            <option value="10" data-i18n="grade_10"></option>
+            <option value="11" data-i18n="grade_11"></option>
+            <option value="12" data-i18n="grade_12"></option>
+          </select>
+          <svg class="select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="form-field">
+        <label data-i18n="filter_type"></label>
+        <div class="select-wrapper">
+          <select id="filter-type">
+            <option value="" data-i18n="filter_all"></option>
+            <option value="competition" data-i18n="opp_competition"></option>
+            <option value="internship" data-i18n="opp_internship"></option>
+            <option value="volunteer" data-i18n="opp_volunteer"></option>
+            <option value="summer" data-i18n="opp_summer"></option>
+          </select>
+          <svg class="select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" id="apply-filters" data-i18n="filter_apply" style="margin-bottom:0;align-self:flex-end;height:40px"></button>
+    </div>
+
+    <div class="opportunity-grid" id="opp-grid"></div>
+  </div>
+
+  <!-- ── PAGE: Important Dates ── -->
+  <div class="dash-page" id="page-dates">
+    <div class="page-hdr">
+      <div class="page-hdr-eyebrow" data-i18n="nav_dates"></div>
+      <h1 data-i18n="dates_title"></h1>
+      <p data-i18n="dates_sub"></p>
+    </div>
+
+    <div class="gate-banner" id="dates-gate" style="display:none">
+      <div class="gate-banner-text"><span data-i18n="gate_msg_dates"></span></div>
+      <div class="gate-banner-actions">
+        <button class="btn btn-primary btn-sm js-open-auth" data-i18n="gate_create"></button>
+        <button class="btn btn-secondary btn-sm js-open-auth-login" data-i18n="gate_login"></button>
+      </div>
+    </div>
+
+    <div class="dates-tabs">
+      <button class="dates-tab active" data-tab="all" data-i18n="dates_tab_all"></button>
+      <button class="dates-tab" data-tab="exams" data-i18n="dates_tab_exams"></button>
+      <button class="dates-tab" data-tab="university" data-i18n="dates_tab_uni"></button>
+      <button class="dates-tab" data-tab="saved" data-i18n="dates_tab_saved"></button>
+    </div>
+
+    <div class="dates-list" id="dates-list"></div>
+  </div>
+
+  <!-- ── PAGE: Goal Grades ── -->
+  <div class="dash-page" id="page-grades">
+    <div class="page-hdr">
+      <div class="page-hdr-eyebrow" data-i18n="nav_grades"></div>
+      <h1 data-i18n="grades_title"></h1>
+      <p data-i18n="grades_sub"></p>
+    </div>
+
+    <div class="gate-banner" id="grades-gate" style="display:none">
+      <div class="gate-banner-text"><span data-i18n="gate_msg_grades"></span></div>
+      <div class="gate-banner-actions">
+        <button class="btn btn-primary btn-sm js-open-auth" data-i18n="gate_create"></button>
+        <button class="btn btn-secondary btn-sm js-open-auth-login" data-i18n="gate_login"></button>
+      </div>
+    </div>
+
+    <div class="goal-grade-grid">
+      <!-- Qudurat card -->
+      <div class="goal-card" id="goal-qudurat">
+        <div class="goal-card-header">
+          <div class="goal-icon">🧠</div>
+          <div>
+            <h3 data-i18n="goal_qudurat_title"></h3>
+            <p data-i18n="goal_qudurat_sub"></p>
+          </div>
+        </div>
+        <div class="goal-score-display">
+          <div class="goal-score-num" id="qudurat-score-display">—</div>
+          <div class="goal-score-label" data-i18n="goal_target_label"></div>
+        </div>
+        <div class="goal-inputs">
+          <div class="form-field" style="margin-bottom:0">
+            <label data-i18n="goal_current_label"></label>
+            <input type="number" id="qudurat-current" min="0" max="100" placeholder="75" data-i18n-placeholder="goal_score_ph"/>
+          </div>
+          <div class="form-field" style="margin-bottom:0">
+            <label data-i18n="goal_target_label"></label>
+            <input type="number" id="qudurat-target" min="0" max="100" placeholder="90" data-i18n-placeholder="goal_score_ph"/>
+          </div>
+          <div class="form-field" style="margin-bottom:0">
+            <label data-i18n="goal_exam_date_label"></label>
+            <input type="date" id="qudurat-date"/>
+          </div>
+        </div>
+        <div style="margin-bottom:.2rem">
+          <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:.3rem">
+            <span style="color:var(--text2)" data-i18n="goal_progress_label"></span>
+            <span id="qudurat-pct" style="color:var(--primary);font-weight:700">0%</span>
+          </div>
+          <div class="goal-prog-bar"><div class="goal-prog-fill" id="qudurat-prog" style="width:0%"></div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <div>
+            <div style="font-size:.72rem;color:var(--text3);margin-bottom:.35rem" data-i18n="goal_intensity_label"></div>
+            <div class="intensity-row" id="qudurat-intensity"></div>
+          </div>
+        </div>
+        <div class="goal-feedback" id="qudurat-feedback" style="display:none"></div>
+        <button class="btn btn-primary btn-sm" id="save-qudurat" data-i18n="goal_save_btn"></button>
+      </div>
+
+      <!-- Tahsili card -->
+      <div class="goal-card" id="goal-tahsili">
+        <div class="goal-card-header">
+          <div class="goal-icon">📖</div>
+          <div>
+            <h3 data-i18n="goal_tahsili_title"></h3>
+            <p data-i18n="goal_tahsili_sub"></p>
+          </div>
+        </div>
+        <div class="goal-score-display">
+          <div class="goal-score-num" id="tahsili-score-display">—</div>
+          <div class="goal-score-label" data-i18n="goal_target_label"></div>
+        </div>
+        <div class="goal-inputs">
+          <div class="form-field" style="margin-bottom:0">
+            <label data-i18n="goal_current_label"></label>
+            <input type="number" id="tahsili-current" min="0" max="100" placeholder="70" data-i18n-placeholder="goal_score_ph"/>
+          </div>
+          <div class="form-field" style="margin-bottom:0">
+            <label data-i18n="goal_target_label"></label>
+            <input type="number" id="tahsili-target" min="0" max="100" placeholder="85" data-i18n-placeholder="goal_score_ph"/>
+          </div>
+          <div class="form-field" style="margin-bottom:0">
+            <label data-i18n="goal_exam_date_label"></label>
+            <input type="date" id="tahsili-date"/>
+          </div>
+        </div>
+        <div style="margin-bottom:.2rem">
+          <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:.3rem">
+            <span style="color:var(--text2)" data-i18n="goal_progress_label"></span>
+            <span id="tahsili-pct" style="color:var(--primary);font-weight:700">0%</span>
+          </div>
+          <div class="goal-prog-bar"><div class="goal-prog-fill" id="tahsili-prog" style="width:0%"></div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <div>
+            <div style="font-size:.72rem;color:var(--text3);margin-bottom:.35rem" data-i18n="goal_intensity_label"></div>
+            <div class="intensity-row" id="tahsili-intensity"></div>
+          </div>
+        </div>
+        <div class="goal-feedback" id="tahsili-feedback" style="display:none"></div>
+        <button class="btn btn-primary btn-sm" id="save-tahsili" data-i18n="goal_save_btn"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: Study Planning Engine ── -->
+  <div class="dash-page" id="page-planner">
+    <div class="page-hdr">
+      <div class="page-hdr-eyebrow" data-i18n="nav_planner"></div>
+      <h1 data-i18n="planner_title"></h1>
+      <p data-i18n="planner_sub"></p>
+    </div>
+
+    <div class="gate-banner" id="planner-gate" style="display:none">
+      <div class="gate-banner-text"><span data-i18n="gate_msg_planner"></span></div>
+      <div class="gate-banner-actions">
+        <button class="btn btn-primary btn-sm js-open-auth" data-i18n="gate_create"></button>
+        <button class="btn btn-secondary btn-sm js-open-auth-login" data-i18n="gate_login"></button>
+      </div>
+    </div>
+
+    <div class="planner-layout">
+      <div class="planner-form-card">
+        <h2 data-i18n="planner_form_title"></h2>
+        <div class="form-field">
+          <label data-i18n="planner_subject"></label>
+          <input type="text" id="plan-subject" data-i18n-placeholder="planner_subject_ph"/>
+        </div>
+        <div class="form-field">
+          <label data-i18n="planner_exam_date"></label>
+          <input type="date" id="plan-exam-date"/>
+        </div>
+        <div class="form-row-2">
+          <div class="form-field" style="margin-bottom:0">
+            <label data-i18n="planner_hours"></label>
+            <input type="number" id="plan-hours" min="1" max="500" placeholder="40"/>
+          </div>
+          <div class="form-field" style="margin-bottom:0">
+            <label data-i18n="planner_daily_hours"></label>
+            <input type="number" id="plan-daily" min="1" max="12" placeholder="2"/>
+          </div>
+        </div>
+        <div class="form-field">
+          <label data-i18n="planner_difficulty"></label>
+          <div class="select-wrapper">
+            <select id="plan-difficulty">
+              <option value="easy" data-i18n="diff_easy"></option>
+              <option value="medium" selected data-i18n="diff_medium"></option>
+              <option value="hard" data-i18n="diff_hard"></option>
+            </select>
+            <svg class="select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="form-field">
+          <label data-i18n="planner_target"></label>
+          <input type="number" id="plan-target" min="0" max="100" placeholder="85"/>
+        </div>
+        <button class="btn btn-primary" id="generate-plan" style="width:100%;justify-content:center" data-i18n="planner_generate"></button>
+      </div>
+
+      <div id="planner-result-area">
+        <div class="empty-state" id="planner-empty">
+          <div class="empty-icon">📋</div>
+          <h3 data-i18n="planner_empty_title"></h3>
+          <p data-i18n="planner_empty_sub"></p>
+        </div>
+        <div id="planner-result" style="display:none">
+          <div class="plan-summary-bar" id="plan-summary" style="margin-bottom:1rem"></div>
+          <div class="recalc-bar" id="recalc-bar" style="display:none;margin-bottom:1rem">
+            <p data-i18n="planner_recalc_msg"></p>
+            <div style="display:flex;align-items:center;gap:.5rem">
+              <input type="number" id="missed-days" min="0" max="30" placeholder="3" style="width:55px;padding:.3rem .5rem;border:1.5px solid var(--yellow-d);border-radius:var(--r-sm);background:var(--yellow-l);color:var(--yellow-d);font-size:.83rem;outline:none"/>
+              <button class="btn btn-sm" id="recalc-btn" style="background:var(--yellow-d);color:#fff" data-i18n="planner_recalc_btn"></button>
+            </div>
+          </div>
+          <div class="planner-result" id="plan-phases"></div>
+          <div style="text-align:center;margin-top:1rem">
+            <button class="btn btn-secondary btn-sm" id="save-plan-btn" data-i18n="planner_save_btn"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: 3-Year Roadmap ── -->
+  <div class="dash-page" id="page-roadmap">
+    <div class="page-hdr">
+      <div class="page-hdr-eyebrow" data-i18n="nav_roadmap"></div>
+      <h1 data-i18n="roadmap_title"></h1>
+      <p data-i18n="roadmap_sub"></p>
+    </div>
+
+    <div class="gate-banner" id="roadmap-gate" style="display:none">
+      <div class="gate-banner-text"><span data-i18n="gate_msg_roadmap"></span></div>
+      <div class="gate-banner-actions">
+        <button class="btn btn-primary btn-sm js-open-auth" data-i18n="gate_create"></button>
+        <button class="btn btn-secondary btn-sm js-open-auth-login" data-i18n="gate_login"></button>
+      </div>
+    </div>
+
+    <div class="roadmap-layout">
+      <div class="roadmap-form-card">
+        <h2 data-i18n="roadmap_form_title"></h2>
+        <div class="form-field">
+          <label data-i18n="filter_grade"></label>
+          <div class="select-wrapper">
+            <select id="rm-grade">
+              <option value="10" data-i18n="grade_10"></option>
+              <option value="11" data-i18n="grade_11"></option>
+              <option value="12" data-i18n="grade_12"></option>
+            </select>
+            <svg class="select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="form-field">
+          <label data-i18n="filter_city"></label>
+          <div class="select-wrapper">
+            <select id="rm-city">
+              <option value="" data-i18n="filter_all"></option>
+              <option value="riyadh" data-i18n="city_riyadh"></option>
+              <option value="jeddah" data-i18n="city_jeddah"></option>
+              <option value="other" data-i18n="filter_other_city"></option>
+            </select>
+            <svg class="select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="form-field">
+          <label data-i18n="rm_career_label"></label>
+          <div class="select-wrapper">
+            <select id="rm-career">
+              <option value="" data-i18n="filter_all"></option>
+              <option value="medicine" data-i18n="career_medicine"></option>
+              <option value="engineering" data-i18n="career_engineering"></option>
+              <option value="cs" data-i18n="career_cs"></option>
+              <option value="business" data-i18n="career_business"></option>
+            </select>
+            <svg class="select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="form-field">
+          <label data-i18n="rm_uni_label"></label>
+          <input type="text" id="rm-uni" data-i18n-placeholder="rm_uni_ph"/>
+        </div>
+        <button class="btn btn-primary" id="generate-roadmap" style="width:100%;justify-content:center" data-i18n="roadmap_generate"></button>
+        <div style="margin-top:.75rem;text-align:center">
+          <button class="btn btn-secondary btn-sm" id="save-roadmap-btn" style="width:100%;justify-content:center;display:none" data-i18n="roadmap_save_btn"></button>
+        </div>
+      </div>
+
+      <div id="roadmap-result-area">
+        <div class="empty-state" id="roadmap-empty">
+          <div class="empty-icon">🗺️</div>
+          <h3 data-i18n="roadmap_empty_title"></h3>
+          <p data-i18n="roadmap_empty_sub"></p>
+        </div>
+        <div class="roadmap-timeline" id="roadmap-timeline" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══════════════════════════════════════
+     AUTH MODAL
+══════════════════════════════════════ -->
+<div class="modal-backdrop" id="auth-modal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h3 data-i18n="auth_modal_title"></h3>
+        <p data-i18n="auth_modal_sub"></p>
+      </div>
+      <button class="modal-close" id="auth-modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- panels toggle via JS -->
+      <div id="auth-panel-signup">
+        <div class="form-field">
+          <label data-i18n="signup_name_label"></label>
+          <input type="text" id="auth-name" data-i18n-placeholder="signup_name_ph"/>
+          <span class="field-error" id="auth-err-name"></span>
+        </div>
+        <div class="form-field">
+          <label data-i18n="signup_email_label"></label>
+          <input type="email" id="auth-email" data-i18n-placeholder="signup_email_ph"/>
+          <span class="field-error" id="auth-err-email"></span>
+        </div>
+        <div class="form-row-2">
+          <div class="form-field" style="margin-bottom:0">
+            <label data-i18n="signup_grade_label"></label>
+            <div class="select-wrapper">
+              <select id="auth-grade">
+                <option value="" data-i18n="signup_grade_ph"></option>
+                <option value="10" data-i18n="grade_10"></option>
+                <option value="11" data-i18n="grade_11"></option>
+                <option value="12" data-i18n="grade_12"></option>
+              </select>
+              <svg class="select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+          <div class="form-field" style="margin-bottom:0">
+            <label data-i18n="signup_city_label"></label>
+            <div class="select-wrapper">
+              <select id="auth-city">
+                <option value="" data-i18n="signup_city_ph"></option>
+                <option value="riyadh" data-i18n="city_riyadh"></option>
+                <option value="jeddah" data-i18n="city_jeddah"></option>
+                <option value="mecca" data-i18n="city_mecca"></option>
+                <option value="dammam" data-i18n="city_dammam"></option>
+                <option value="other" data-i18n="filter_other_city"></option>
+              </select>
+              <svg class="select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="auth-signup-btn" data-i18n="signup_btn"></button>
+          <button class="btn btn-ghost" id="auth-to-login" style="font-size:.83rem" data-i18n="auth_have_account"></button>
+        </div>
+        <p style="text-align:center;font-size:.78rem;color:var(--text3);margin-top:.5rem" data-i18n="auth_guest_continue" id="auth-guest-continue-msg"></p>
+        <div style="margin-top:.4rem;text-align:center">
+          <button class="btn btn-ghost btn-sm" id="auth-close-guest" data-i18n="gate_close"></button>
+        </div>
+      </div>
+      <div id="auth-panel-login" style="display:none">
+        <div class="form-field">
+          <label data-i18n="signup_email_label"></label>
+          <input type="email" id="auth-login-email" data-i18n-placeholder="signup_email_ph"/>
+          <span class="field-error" id="auth-err-login-email"></span>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="auth-login-btn" data-i18n="login_btn"></button>
+          <button class="btn btn-ghost" id="auth-to-signup" style="font-size:.83rem" data-i18n="auth_no_account"></button>
+        </div>
+        <div style="margin-top:.5rem;text-align:center">
+          <button class="btn btn-ghost btn-sm" id="auth-close-guest-login" data-i18n="gate_close"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ── URL helper ── */
+function getQueryParam(name) {
+  try {
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name);
+  } catch (e) {
+    return null;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TRANSLATIONS (AR + EN)
+   ═══════════════════════════════════════════════════════════ */
+const T = {
+ar: {
+  lang_btn:'English',
+  // Header
+  header_role_student:'طالب',
+  header_guest:'ضيف',
+  header_logout:'تسجيل خروج',
+  header_login_cta:'تسجيل / دخول',
+  sidebar_collapse:'طي',
+  sidebar_expand:'توسيع',
+  // Nav
+  nav_section_label:'الأدوات',
+  nav_radar:'رادار الفرص',
+  nav_dates:'المواعيد المهمة',
+  nav_grades:'الدرجات المستهدفة',
+  nav_planner:'مخطط الدراسة',
+  nav_roadmap:'خارطة الطريق',
+  // Gate
+  gate_msg_radar:'أنشئ حساباً لحفظ الفرص وإضافة تنبيهات.',
+  gate_msg_dates:'سجّل دخولك لإضافة مواعيدك الشخصية.',
+  gate_msg_grades:'سجّل دخولك لحفظ درجاتك المستهدفة.',
+  gate_msg_planner:'سجّل دخولك لحفظ خطتك الدراسية.',
+  gate_msg_roadmap:'سجّل دخولك لحفظ خارطة طريقك.',
+  gate_create:'إنشاء حساب مجاني',
+  gate_login:'تسجيل الدخول',
+  gate_close:'تصفح كضيف',
+  // Auth modal
+  auth_modal_title:'أهلاً بك في تدرج',
+  auth_modal_sub:'أنشئ حساباً مجانياً للوصول إلى كل الأدوات',
+  auth_have_account:'لديك حساب؟ سجّل دخولك',
+  auth_no_account:'ليس لديك حساب؟ أنشئ حساباً',
+  auth_guest_continue:'يمكنك الاستمرار كضيف وتصفح المنصة.',
+  // Signup / login (re-use from landing pattern)
+  signup_name_label:'الاسم الكامل',
+  signup_name_ph:'اسمك',
+  signup_email_label:'البريد الإلكتروني',
+  signup_email_ph:'example@email.com',
+  signup_grade_label:'الصف',
+  signup_grade_ph:'اختر صفك',
+  signup_city_label:'المدينة',
+  signup_city_ph:'اختر مدينتك',
+  signup_btn:'إنشاء الحساب',
+  login_btn:'تسجيل الدخول',
+  // Filters
+  filter_city:'المدينة',
+  filter_grade:'الصف',
+  filter_type:'النوع',
+  filter_all:'الكل',
+  filter_apply:'تطبيق',
+  filter_other_city:'مدينة أخرى',
+  // Grades
+  grade_10:'الصف العاشر',
+  grade_11:'الصف الحادي عشر',
+  grade_12:'الصف الثاني عشر',
+  // Cities
+  city_riyadh:'الرياض',
+  city_jeddah:'جدة',
+  city_mecca:'مكة المكرمة',
+  city_dammam:'الدمام',
+  // Careers
+  career_medicine:'الطب والصحة',
+  career_engineering:'الهندسة',
+  career_cs:'الحاسب وتقنية المعلومات',
+  career_business:'الأعمال والإدارة',
+  // Opp types
+  opp_competition:'مسابقة',
+  opp_internship:'تدريب',
+  opp_volunteer:'تطوع',
+  opp_summer:'برنامج صيفي',
+  // Opp actions
+  opp_save:'💾 احفظ',
+  opp_add:'+ أضف للوحة',
+  opp_notify:'🔔 تنبيه',
+  opp_notify_coming:'قريباً',
+  opp_saved:'✓ محفوظ',
+  opp_deadline_prefix:'آخر موعد:',
+  // Radar page
+  radar_title:'رادار الفرص',
+  radar_sub:'اكتشف فرصاً أكاديمية مناسبة لمسارك ومستواك.',
+  // Dates page
+  dates_title:'المواعيد المهمة',
+  dates_sub:'جميع المواعيد الحرجة في مكان واحد — اختبارات، جامعات، فرص.',
+  dates_tab_all:'الكل',
+  dates_tab_exams:'الاختبارات',
+  dates_tab_uni:'الجامعات',
+  dates_tab_saved:'المحفوظة',
+  dates_in_days:'يوم',
+  dates_today:'اليوم!',
+  dates_past:'انتهى',
+  // Goal grades
+  grades_title:'الدرجات المستهدفة',
+  grades_sub:'حدد هدفك وتابع تقدمك نحو درجة القدرات والتحصيلي.',
+  goal_qudurat_title:'القدرات العامة',
+  goal_qudurat_sub:'Qudurat',
+  goal_tahsili_title:'التحصيل الدراسي',
+  goal_tahsili_sub:'Tahsili',
+  goal_target_label:'الدرجة المستهدفة',
+  goal_current_label:'درجتي الحالية',
+  goal_exam_date_label:'تاريخ الاختبار',
+  goal_progress_label:'التقدم',
+  goal_intensity_label:'كثافة الدراسة المطلوبة',
+  goal_save_btn:'حفظ الهدف',
+  goal_score_ph:'0 – 100',
+  feedback_great:'ممتاز! أنت قريب جداً من هدفك. استمر!',
+  feedback_ok:'جيد — تحتاج إلى مزيد من التركيز للوصول لهدفك.',
+  feedback_push:'تحتاج إلى دراسة مكثفة. الهدف قابل للتحقق!',
+  intensity_low:'خفيفة',
+  intensity_med:'متوسطة',
+  intensity_high:'مرتفعة',
+  // Planner
+  planner_title:'مخطط الدراسة الذكي',
+  planner_sub:'أدخل بيانات مادتك واحصل على خطة يومية مرحلية.',
+  planner_form_title:'بيانات الخطة',
+  planner_subject:'المادة / الاختبار',
+  planner_subject_ph:'مثل: القدرات، التحصيلي...',
+  planner_exam_date:'تاريخ الاختبار',
+  planner_hours:'إجمالي ساعات المحتوى',
+  planner_daily_hours:'ساعات يومية متاحة',
+  planner_difficulty:'مستوى الصعوبة',
+  planner_target:'الدرجة المستهدفة (%)',
+  planner_generate:'توليد الخطة',
+  planner_save_btn:'حفظ الخطة',
+  planner_empty_title:'لا توجد خطة بعد',
+  planner_empty_sub:'أدخل بيانات مادتك على اليسار لتوليد خطة دراسية مفصّلة.',
+  planner_recalc_msg:'أيام فائتة؟ أدخل عددها لإعادة الحساب.',
+  planner_recalc_btn:'إعادة حساب',
+  diff_easy:'سهل',
+  diff_medium:'متوسط',
+  diff_hard:'صعب',
+  phase_learn:'مرحلة التعلم',
+  phase_practice:'مرحلة التطبيق',
+  phase_revision:'مرحلة المراجعة',
+  phase_mock:'اختبارات تجريبية',
+  phase_buffer:'وقت احتياطي',
+  plan_days_label:'يوم دراسة',
+  plan_hours_label:'ساعة إجمالية',
+  plan_phases_label:'مرحلة',
+  plan_start:'يبدأ:',
+  plan_end:'ينتهي:',
+  // Roadmap
+  roadmap_title:'خارطة الطريق الأكاديمية',
+  roadmap_sub:'رؤية بعيدة المدى لمسارك الأكاديمي خطوة بخطوة.',
+  roadmap_form_title:'بيانات المسار',
+  rm_career_label:'الاهتمام المهني',
+  rm_uni_label:'الجامعة المستهدفة',
+  rm_uni_ph:'مثل: KAUST، KFUPM...',
+  roadmap_generate:'توليد خارطة الطريق',
+  roadmap_save_btn:'حفظ خارطة الطريق',
+  roadmap_empty_title:'لا توجد خارطة طريق بعد',
+  roadmap_empty_sub:'أدخل بياناتك على اليسار لتوليد خارطة طريق أكاديمية مخصصة.',
+  rm_focus:'محاور التركيز',
+  rm_exams:'الاختبارات',
+  rm_milestones:'المعالم',
+  rm_volunteer:'التطوع المقترح',
+  rm_applications:'فترات التقديم',
+  // Dates urgency
+  urgency_upcoming:'قادم',
+  urgency_14:'أقل من أسبوعين',
+  urgency_3:'أقل من ٣ أيام',
+},
+
+en: {
+  lang_btn:'عربي',
+  header_role_student:'Student',
+  header_guest:'Guest',
+  header_logout:'Log out',
+  header_login_cta:'Log in / Sign up',
+  sidebar_collapse:'Collapse',
+  sidebar_expand:'Expand',
+  nav_section_label:'Tools',
+  nav_radar:'Opportunity Radar',
+  nav_dates:'Important Dates',
+  nav_grades:'Goal Grades',
+  nav_planner:'Study Planner',
+  nav_roadmap:'3-Year Roadmap',
+  gate_msg_radar:'Create an account to save opportunities and set reminders.',
+  gate_msg_dates:'Log in to add your personal deadlines.',
+  gate_msg_grades:'Log in to save your target grades.',
+  gate_msg_planner:'Log in to save your study plan.',
+  gate_msg_roadmap:'Log in to save your roadmap.',
+  gate_create:'Create free account',
+  gate_login:'Log in',
+  gate_close:'Continue as guest',
+  auth_modal_title:'Welcome to Tadarruj',
+  auth_modal_sub:'Create a free account to unlock all tools',
+  auth_have_account:'Already have an account? Log in',
+  auth_no_account:"Don't have an account? Sign up",
+  auth_guest_continue:'You can continue as a guest to browse the platform.',
+  signup_name_label:'Full name',
+  signup_name_ph:'Your name',
+  signup_email_label:'Email address',
+  signup_email_ph:'example@email.com',
+  signup_grade_label:'Grade',
+  signup_grade_ph:'Select grade',
+  signup_city_label:'City',
+  signup_city_ph:'Select city',
+  signup_btn:'Create Account',
+  login_btn:'Log In',
+  filter_city:'City',
+  filter_grade:'Grade',
+  filter_type:'Type',
+  filter_all:'All',
+  filter_apply:'Apply',
+  filter_other_city:'Other city',
+  grade_10:'Grade 10',
+  grade_11:'Grade 11',
+  grade_12:'Grade 12',
+  city_riyadh:'Riyadh',
+  city_jeddah:'Jeddah',
+  city_mecca:'Mecca',
+  city_dammam:'Dammam',
+  career_medicine:'Medicine & Health',
+  career_engineering:'Engineering',
+  career_cs:'Computer Science & IT',
+  career_business:'Business & Management',
+  opp_competition:'Competition',
+  opp_internship:'Internship',
+  opp_volunteer:'Volunteer',
+  opp_summer:'Summer Program',
+  opp_save:'💾 Save',
+  opp_add:'+ Add to Board',
+  opp_notify:'🔔 Remind me',
+  opp_notify_coming:'Coming soon',
+  opp_saved:'✓ Saved',
+  opp_deadline_prefix:'Deadline:',
+  radar_title:'Opportunity Radar',
+  radar_sub:'Discover academic opportunities tailored to your path and level.',
+  dates_title:'Important Dates',
+  dates_sub:'All critical deadlines in one place — exams, universities, opportunities.',
+  dates_tab_all:'All',
+  dates_tab_exams:'Exams',
+  dates_tab_uni:'Universities',
+  dates_tab_saved:'Saved',
+  dates_in_days:'days',
+  dates_today:'Today!',
+  dates_past:'Passed',
+  grades_title:'Goal Grade Tracker',
+  grades_sub:'Set your targets and track your progress toward Qudurat & Tahsili.',
+  goal_qudurat_title:'Qudurat (General Ability)',
+  goal_qudurat_sub:'القدرات العامة',
+  goal_tahsili_title:'Tahsili (Achievement)',
+  goal_tahsili_sub:'التحصيل الدراسي',
+  goal_target_label:'Target score',
+  goal_current_label:'Current score',
+  goal_exam_date_label:'Exam date',
+  goal_progress_label:'Progress',
+  goal_intensity_label:'Required study intensity',
+  goal_save_btn:'Save goal',
+  goal_score_ph:'0 – 100',
+  feedback_great:"Great — you're very close to your goal. Keep going!",
+  feedback_ok:'Good — a bit more focused work will get you there.',
+  feedback_push:'You need intensive preparation. The goal is absolutely achievable!',
+  intensity_low:'Light',
+  intensity_med:'Moderate',
+  intensity_high:'Intensive',
+  planner_title:'Smart Study Planner',
+  planner_sub:'Enter your subject details and get a phased daily schedule.',
+  planner_form_title:'Plan Parameters',
+  planner_subject:'Subject / Exam',
+  planner_subject_ph:'e.g. Qudurat, Tahsili...',
+  planner_exam_date:'Exam date',
+  planner_hours:'Total content hours',
+  planner_daily_hours:'Available hours/day',
+  planner_difficulty:'Difficulty level',
+  planner_target:'Target score (%)',
+  planner_generate:'Generate Plan',
+  planner_save_btn:'Save Plan',
+  planner_empty_title:'No plan yet',
+  planner_empty_sub:'Fill in your subject details on the left to generate a detailed study schedule.',
+  planner_recalc_msg:'Missed some days? Enter the count to recalculate.',
+  planner_recalc_btn:'Recalculate',
+  diff_easy:'Easy',
+  diff_medium:'Medium',
+  diff_hard:'Hard',
+  phase_learn:'Learning Phase',
+  phase_practice:'Practice Phase',
+  phase_revision:'Revision Phase',
+  phase_mock:'Mock Exams',
+  phase_buffer:'Buffer Days',
+  plan_days_label:'study days',
+  plan_hours_label:'total hours',
+  plan_phases_label:'phase',
+  plan_start:'Starts:',
+  plan_end:'Ends:',
+  roadmap_title:'3-Year Academic Roadmap',
+  roadmap_sub:'A long-range vision for your academic journey, step by step.',
+  roadmap_form_title:'Your Profile',
+  rm_career_label:'Career interest',
+  rm_uni_label:'Target university',
+  rm_uni_ph:'e.g. KAUST, KFUPM...',
+  roadmap_generate:'Generate Roadmap',
+  roadmap_save_btn:'Save Roadmap',
+  roadmap_empty_title:'No roadmap yet',
+  roadmap_empty_sub:'Fill in your details on the left to generate a personalized academic roadmap.',
+  rm_focus:'Focus Areas',
+  rm_exams:'Exams',
+  rm_milestones:'Milestones',
+  rm_volunteer:'Volunteering',
+  rm_applications:'Application Windows',
+  urgency_upcoming:'Upcoming',
+  urgency_14:'Under 2 weeks',
+  urgency_3:'Under 3 days',
+},
+};
+
+/* ═══════════════════════════════════════════════════════════
+   MOCK DATA  (clearly marked — replace with real API)
+   ═══════════════════════════════════════════════════════════ */
+// NOTE: All dates below are relative to today for demo purposes.
+function daysFromNow(n){ const d=new Date(); d.setDate(d.getDate()+n); return d; }
+
+const MOCK_OPPORTUNITIES = [
+  {id:1,icon:'🏆',titleAr:'أولمبياد الرياضيات السعودي',titleEn:'Saudi Math Olympiad',orgAr:'وزارة التعليم',orgEn:'Ministry of Education',type:'competition',grades:['10','11','12'],cities:['riyadh','jeddah','dammam','other'],deadline:daysFromNow(2)},
+  {id:2,icon:'💻',titleAr:'برنامج تدريب أرامكو الصيفي',titleEn:'Saudi Aramco Summer Training',orgAr:'أرامكو السعودية',orgEn:'Saudi Aramco',type:'summer',grades:['11','12'],cities:['dammam'],deadline:daysFromNow(18)},
+  {id:3,icon:'🔬',titleAr:'مسابقة العلوم الوطنية',titleEn:'National Science Competition',orgAr:'مركز الملك عبدالعزيز للموهبة',orgEn:'Mawhiba Center',type:'competition',grades:['10','11','12'],cities:['riyadh','jeddah','mecca','dammam','other'],deadline:daysFromNow(9)},
+  {id:4,icon:'🌱',titleAr:'تطوع في مركز صحي',titleEn:'Healthcare Center Volunteering',orgAr:'وزارة الصحة',orgEn:'Ministry of Health',type:'volunteer',grades:['10','11','12'],cities:['riyadh','jeddah','mecca','dammam','other'],deadline:daysFromNow(45)},
+  {id:5,icon:'🎓',titleAr:'منح جامعة الملك فهد',titleEn:'KFUPM Scholarships',orgAr:'جامعة الملك فهد',orgEn:'KFUPM',type:'internship',grades:['12'],cities:['dammam'],deadline:daysFromNow(25)},
+  {id:6,icon:'🚀',titleAr:'برنامج KAUST Discovery',titleEn:'KAUST Discovery Program',orgAr:'جامعة الملك عبدالله',orgEn:'KAUST',type:'summer',grades:['11','12'],cities:['jeddah','other'],deadline:daysFromNow(35)},
+  {id:7,icon:'📱',titleAr:'مسابقة تطوير التطبيقات',titleEn:'App Development Hackathon',orgAr:'هيئة الاتصالات',orgEn:'CITC',type:'competition',grades:['10','11','12'],cities:['riyadh','jeddah'],deadline:daysFromNow(12)},
+  {id:8,icon:'🎨',titleAr:'برنامج الفنون الإبداعية',titleEn:'Creative Arts Program',orgAr:'وزارة الثقافة',orgEn:'Ministry of Culture',type:'volunteer',grades:['10','11'],cities:['riyadh','jeddah','mecca'],deadline:daysFromNow(60)},
+];
+
+const MOCK_DATES = [
+  {id:1,titleAr:'تسجيل القدرات — الدورة الثانية',titleEn:'Qudurat Registration — Round 2',subAr:'المركز الوطني للتقويم',subEn:'National Center for Assessment',date:daysFromNow(3),category:'exams'},
+  {id:2,titleAr:'اختبار التحصيل الدراسي',titleEn:'Tahsili Exam',subAr:'الموعد الأول للفصل الثاني',subEn:'First session, Semester 2',date:daysFromNow(28),category:'exams'},
+  {id:3,titleAr:'تقديم KAUST لعام 2025',titleEn:'KAUST Application 2025',subAr:'آخر موعد للتقديم',subEn:'Final application deadline',date:daysFromNow(12),category:'university'},
+  {id:4,titleAr:'تسجيل جامعة الملك سعود',titleEn:'KSU Registration',subAr:'باب القبول المبكر',subEn:'Early admission window',date:daysFromNow(42),category:'university'},
+  {id:5,titleAr:'أولمبياد الرياضيات السعودي',titleEn:'Saudi Math Olympiad',subAr:'فرصة محفوظة',subEn:'Saved opportunity',date:daysFromNow(2),category:'saved'},
+  {id:6,titleAr:'اختبار IELTS',titleEn:'IELTS Exam',subAr:'جلسة مارس',subEn:'March session',date:daysFromNow(55),category:'exams'},
+];
+
+/* ═══════════════════════════════════════════════════════════
+   LANGUAGE MANAGER
+   ═══════════════════════════════════════════════════════════ */
+const Lang = (() => {
+  const KEY = 'tadarruj_lang';
+  let current = 'ar';
+
+  function translateDOM(lang) {
+    const dict = T[lang] || T.ar;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (key in dict) el.textContent = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (key in dict) el.placeholder = dict[key];
+    });
+    document.querySelectorAll('select option[data-i18n]').forEach(opt => {
+      const key = opt.getAttribute('data-i18n');
+      if (key in dict) opt.textContent = dict[key];
+    });
+  }
+
+  function apply(lang, animate = true) {
+    current = lang;
+    localStorage.setItem(KEY, lang);
+    const html = document.documentElement;
+    if (animate) { document.body.style.opacity = '0'; }
+    html.setAttribute('lang', lang === 'ar' ? 'ar' : 'en');
+    html.setAttribute('dir',  lang === 'ar' ? 'rtl' : 'ltr');
+    document.title = lang === 'ar' ? 'تدرج | لوحة التحكم' : 'Tadarruj | Dashboard';
+    translateDOM(lang);
+    const lb = document.getElementById('lang-btn');
+    if (lb) lb.textContent = (T[lang] || T.ar).lang_btn;
+    if (animate) requestAnimationFrame(() => { document.body.style.opacity = '1'; });
+    // Re-render dynamic content
+    Dashboard.onLangChange(lang);
+  }
+
+  function toggle() { apply(current === 'ar' ? 'en' : 'ar', true); }
+  function init() {
+    const saved = localStorage.getItem(KEY);
+    current = (saved === 'en') ? 'en' : 'ar';
+    apply(current, false);
+  }
+  function get() { return current; }
+  function dict() { return T[current] || T.ar; }
+
+  return { init, toggle, get, dict, apply };
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════════════════════ */
+const Toast = (() => {
+  function show(msg, type='info', dur=3500) {
+    const c = document.getElementById('toast-container'); if(!c) return;
+    const el = document.createElement('div');
+    el.className = `toast toast-${type}`;
+    el.innerHTML = `<span>${msg}</span><span class="toast-x" tabindex="0">✕</span>`;
+    const dismiss = () => { el.classList.add('leaving'); el.addEventListener('animationend',()=>el.remove(),{once:true}); };
+    el.querySelector('.toast-x').addEventListener('click', dismiss);
+    c.appendChild(el); setTimeout(dismiss, dur);
+  }
+  return { show, success:(m,d)=>show(m,'success',d), info:(m,d)=>show(m,'info',d),
+           warn:(m,d)=>show(m,'warn',d), error:(m,d)=>show(m,'error',d) };
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════════════════════════ */
+const Modal = (() => {
+  function open(id) {
+    const el = document.getElementById(id); if(!el) return;
+    el.classList.add('open'); document.body.style.overflow='hidden';
+  }
+  function close(id) {
+    const el = document.getElementById(id); if(!el) return;
+    el.classList.remove('open'); document.body.style.overflow='';
+  }
+  return { open, close };
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   APP MODE (guest / account)
+   ═══════════════════════════════════════════════════════════ */
+const AppMode = (() => {
+  const KEY = 'tadarruj_mode';
+  const PROFILE_KEY = 'tadarruj_profile';
+
+  function get() { return localStorage.getItem(KEY) || 'guest'; }
+
+  function getProfile() {
+    try { return JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null'); } catch(e) { return null; }
+  }
+
+  function setAccount(profile) {
+    localStorage.setItem(KEY, 'account');
+    localStorage.setItem(PROFILE_KEY, JSON.stringify({...profile, confirmed:true}));
+    applyUI('account', profile);
+  }
+
+  function setGuest() {
+    localStorage.setItem(KEY, 'guest');
+    applyUI('guest', null);
+  }
+
+  function logout() {
+    localStorage.removeItem(KEY);
+    localStorage.removeItem(PROFILE_KEY);
+    applyUI('guest', null);
+    Toast.info(Lang.dict().header_logout || 'Logged out');
+  }
+
+  function applyUI(mode, profile) {
+    const acct = document.getElementById('user-area-account');
+    const guest = document.getElementById('user-area-guest');
+    const isAccount = (mode === 'account');
+    if (acct) acct.style.display = isAccount ? 'flex' : 'none';
+    if (guest) guest.style.display = isAccount ? 'none' : 'flex';
+
+    if (isAccount && profile) {
+      const av = document.getElementById('header-avatar');
+      const nm = document.getElementById('header-name');
+      if (av) av.textContent = (profile.name||'U').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      if (nm) nm.textContent = profile.name || '';
+    }
+
+    // Show/hide gate banners
+    ['radar','dates','grades','planner','roadmap'].forEach(p => {
+      const g = document.getElementById(p+'-gate');
+      if (g) g.style.display = isAccount ? 'none' : '';
+    });
+  }
+
+  function init() {
+    const forceGuest = getQueryParam('guest') === 'true';
+    const profile = getProfile();
+    const storedMode = localStorage.getItem(KEY) || 'guest';
+    if (forceGuest) {
+      localStorage.setItem(KEY, 'guest');
+      applyUI('guest', null);
+      return;
+    }
+    const isAccount =
+      storedMode === 'account' &&
+      profile !== null &&
+      profile.confirmed === true;
+    if (isAccount) applyUI('account', profile);
+    else applyUI('guest', null);
+  }
+
+  return { get, getProfile, setAccount, setGuest, logout, applyUI, init };
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   AUTH CONTROLLER
+   ═══════════════════════════════════════════════════════════ */
+const Auth = (() => {
+  function showSignup() {
+    window.parent.postMessage({ type: 'TADARRUJ_GO_HOME' }, '*');
+  }
+  function showLogin() {
+    window.parent.postMessage({ type: 'TADARRUJ_GO_HOME' }, '*');
+  }
+
+  function handleSignup() { showSignup(); }
+  function handleLogin() { showLogin(); }
+
+  function init() {
+    document.querySelectorAll('.js-open-auth').forEach(btn =>
+      btn.addEventListener('click', () => showSignup())
+    );
+    document.querySelectorAll('.js-open-auth-login').forEach(btn =>
+      btn.addEventListener('click', () => showLogin())
+    );
+    document.getElementById('logout-btn')?.addEventListener('click', () => {
+      AppMode.logout();
+      Dashboard.refresh();
+      window.parent.postMessage({ type: 'TADARRUJ_LOGOUT' }, '*');
+    });
+  }
+
+  return { init, showSignup, showLogin };
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════════ */
+const Nav = (() => {
+  let currentPage = 'radar';
+  let sidebarCollapsed = false;
+
+  function goTo(page) {
+    // Hide all pages, show target
+    document.querySelectorAll('.dash-page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-'+page);
+    if (target) target.classList.add('active');
+    // Update nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.toggle('active', item.getAttribute('data-page') === page);
+    });
+    currentPage = page;
+    // Close mobile sidebar
+    if (window.innerWidth <= 768) closeMobileSidebar();
+  }
+
+  function initNavItems() {
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => goTo(item.getAttribute('data-page')));
+    });
+  }
+
+  function toggleSidebar() {
+    sidebarCollapsed = !sidebarCollapsed;
+    const sidebar = document.getElementById('dash-sidebar');
+    const main = document.getElementById('dash-main');
+    const icon = document.getElementById('sidebar-toggle-icon');
+    const text = document.getElementById('sidebar-toggle-text');
+    sidebar.classList.toggle('collapsed', sidebarCollapsed);
+    main.classList.toggle('sidebar-collapsed', sidebarCollapsed);
+    // Flip arrow
+    if (icon) {
+      const isRTL = document.documentElement.dir === 'rtl';
+      if (sidebarCollapsed) {
+        icon.querySelector('polyline').setAttribute('points', isRTL ? '9 18 15 12 9 6' : '15 18 9 12 15 6');
+      } else {
+        icon.querySelector('polyline').setAttribute('points', isRTL ? '15 18 9 12 15 6' : '9 18 15 12 9 6');
+      }
+    }
+    if (text) text.textContent = sidebarCollapsed ? (T[Lang.get()]||T.ar).sidebar_expand : (T[Lang.get()]||T.ar).sidebar_collapse;
+    // Hide nav text when collapsed
+    document.querySelectorAll('.nav-text,.nav-label').forEach(el => {
+      el.style.display = sidebarCollapsed ? 'none' : '';
+    });
+  }
+
+  function openMobileSidebar() {
+    document.getElementById('dash-sidebar').classList.add('mobile-open');
+    document.getElementById('sidebar-backdrop').classList.add('open');
+    document.getElementById('dash-burger').setAttribute('aria-expanded','true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMobileSidebar() {
+    document.getElementById('dash-sidebar').classList.remove('mobile-open');
+    document.getElementById('sidebar-backdrop').classList.remove('open');
+    document.getElementById('dash-burger').setAttribute('aria-expanded','false');
+    document.body.style.overflow = '';
+  }
+
+  function init() {
+    initNavItems();
+    document.getElementById('sidebar-toggle')?.addEventListener('click', toggleSidebar);
+    document.getElementById('dash-burger')?.addEventListener('click', () => {
+      const isOpen = document.getElementById('dash-sidebar').classList.contains('mobile-open');
+      isOpen ? closeMobileSidebar() : openMobileSidebar();
+    });
+    document.getElementById('sidebar-backdrop')?.addEventListener('click', closeMobileSidebar);
+    document.addEventListener('keydown', e => { if(e.key==='Escape') closeMobileSidebar(); });
+  }
+
+  return { init, goTo, get: () => currentPage };
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITY: Date formatting
+   ═══════════════════════════════════════════════════════════ */
+function formatDate(date, lang) {
+  if (!date) return '';
+  const locale = lang === 'ar' ? 'ar-SA' : 'en-US';
+  return date.toLocaleDateString(locale, { day:'numeric', month:'short', year:'numeric' });
+}
+
+function daysUntil(date) {
+  const now = new Date(); now.setHours(0,0,0,0);
+  const target = new Date(date); target.setHours(0,0,0,0);
+  return Math.round((target - now) / 86400000);
+}
+
+function urgencyClass(days) {
+  if (days < 0) return { dot:'urgency-red', countdown:'countdown-red', label:'past' };
+  if (days <= 3) return { dot:'urgency-red', countdown:'countdown-red', label:'3days' };
+  if (days <= 14) return { dot:'urgency-yellow', countdown:'countdown-yellow', label:'14days' };
+  return { dot:'urgency-green', countdown:'countdown-green', label:'upcoming' };
+}
+
+/* ═══════════════════════════════════════════════════════════
+   OPPORTUNITY RADAR RENDERER
+   ═══════════════════════════════════════════════════════════ */
+const RadarPage = (() => {
+  let savedIds = new Set();
+
+  function renderOpps(opps) {
+    const lang = Lang.get();
+    const d = Lang.dict();
+    const grid = document.getElementById('opp-grid');
+    if (!grid) return;
+    if (!opps.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">🔍</div>
+        <h3>${lang==='ar'?'لا توجد فرص مطابقة':'No matching opportunities'}</h3>
+        <p>${lang==='ar'?'جرّب تغيير الفلاتر':'Try adjusting the filters'}</p>
+      </div>`;
+      return;
+    }
+    grid.innerHTML = opps.map(opp => {
+      const days = daysUntil(opp.deadline);
+      const urg = urgencyClass(days);
+      const title = lang === 'ar' ? opp.titleAr : opp.titleEn;
+      const org = lang === 'ar' ? opp.orgAr : opp.orgEn;
+      const typeKey = 'opp_'+opp.type;
+      const typeLabel = d[typeKey] || opp.type;
+      let deadlineColor = urg.dot === 'urgency-red' ? 'urgent-red' : (urg.dot === 'urgency-yellow' ? 'urgent-yellow' : 'urgent-green');
+      let deadlineText = days < 0 ? d.dates_past : (days === 0 ? d.dates_today : `${d.opp_deadline_prefix} ${formatDate(opp.deadline, lang)}`);
+      const isSaved = savedIds.has(opp.id);
+      return `<div class="opp-card" data-id="${opp.id}">
+        <div class="opp-card-header">
+          <div class="opp-card-icon">${opp.icon}</div>
+          <div style="flex:1;min-width:0">
+            <h3>${title}</h3>
+            <div class="opp-card-org">${org}</div>
+          </div>
+        </div>
+        <div class="opp-meta">
+          <span class="badge badge-blue">${typeLabel}</span>
+          <span class="opp-deadline ${deadlineColor}">${deadlineText}</span>
+          ${days >= 0 && days <= 14 ? `<span class="badge ${urg.countdown==='countdown-red'?'badge-red':'badge-yellow'}">${days===0?d.dates_today:days+' '+d.dates_in_days}</span>` : ''}
+        </div>
+        <div class="opp-actions">
+          <button class="btn btn-secondary btn-sm opp-save-btn" data-id="${opp.id}">${isSaved ? d.opp_saved : d.opp_save}</button>
+          <button class="btn btn-primary btn-sm opp-add-btn" data-id="${opp.id}">${d.opp_add}</button>
+          <button class="btn btn-ghost btn-sm opp-notify-btn" title="${d.opp_notify_coming}" data-id="${opp.id}">${d.opp_notify}</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    // Wire save/add buttons
+    grid.querySelectorAll('.opp-save-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleOppAction(parseInt(btn.dataset.id), 'save'));
+    });
+    grid.querySelectorAll('.opp-add-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleOppAction(parseInt(btn.dataset.id), 'add'));
+    });
+    grid.querySelectorAll('.opp-notify-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        Toast.info(Lang.get()==='ar'?'🔔 التنبيهات — قريباً!':'🔔 Reminders — coming soon!', 3000);
+      });
+    });
+  }
+
+  function handleOppAction(id, action) {
+    if (AppMode.get() !== 'account') { Auth.showSignup(); return; }
+    if (action === 'save') {
+      savedIds.add(id);
+      Toast.success(Lang.get()==='ar'?'✓ تم حفظ الفرصة':'✓ Opportunity saved', 2500);
+      refresh();
+    } else {
+      Toast.success(Lang.get()==='ar'?'✓ أُضيفت إلى لوحتك':'✓ Added to your board', 2500);
+    }
+  }
+
+  function getFiltered() {
+    const city  = document.getElementById('filter-city')?.value  || '';
+    const grade = document.getElementById('filter-grade')?.value || '';
+    const type  = document.getElementById('filter-type')?.value  || '';
+    return MOCK_OPPORTUNITIES.filter(o =>
+      (!city  || o.cities.includes(city)) &&
+      (!grade || o.grades.includes(grade)) &&
+      (!type  || o.type === type)
+    );
+  }
+
+  function refresh() { renderOpps(getFiltered()); }
+
+  function init() {
+    document.getElementById('apply-filters')?.addEventListener('click', refresh);
+    refresh();
+  }
+
+  return { init, refresh };
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   IMPORTANT DATES RENDERER
+   ═══════════════════════════════════════════════════════════ */
+const DatesPage = (() => {
+  let activeTab = 'all';
+
+  function render() {
+    const lang = Lang.get();
+    const d = Lang.dict();
+    const list = document.getElementById('dates-list');
+    if (!list) return;
+    const filtered = MOCK_DATES.filter(item => activeTab === 'all' || item.category === activeTab)
+      .sort((a,b) => a.date - b.date);
+
+    if (!filtered.length) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div>
+        <h3>${lang==='ar'?'لا توجد مواعيد':'No dates'}</h3>
+        <p>${lang==='ar'?'لا توجد مواعيد في هذه الفئة':'No dates in this category'}</p></div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map(item => {
+      const days = daysUntil(item.date);
+      const urg = urgencyClass(days);
+      const title = lang === 'ar' ? item.titleAr : item.titleEn;
+      const sub   = lang === 'ar' ? item.subAr   : item.subEn;
+      let countdownText = '';
+      if (days < 0) countdownText = d.dates_past;
+      else if (days === 0) countdownText = d.dates_today;
+      else countdownText = `${days} ${d.dates_in_days}`;
+      return `<div class="date-item">
+        <div class="date-urgency ${urg.dot}"></div>
+        <div class="date-body">
+          <div class="date-title">${title}</div>
+          <div class="date-sub">${sub} · ${formatDate(item.date, lang)}</div>
+        </div>
+        <span class="date-countdown ${urg.countdown}">${countdownText}</span>
+        <button class="date-add-btn js-date-add" data-id="${item.id}" title="${d.opp_add}">+</button>
+      </div>`;
+    }).join('');
+
+    list.querySelectorAll('.js-date-add').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (AppMode.get() !== 'account') { Auth.showSignup(); return; }
+        Toast.success(lang==='ar'?'✓ أُضيف إلى لوحتك':'✓ Added to your board', 2500);
+      });
+    });
+  }
+
+  function init() {
+    document.querySelectorAll('.dates-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.dates-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        activeTab = tab.getAttribute('data-tab');
+        render();
+      });
+    });
+    render();
+  }
+
+  return { init, render };
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   GOAL GRADES
+   ═══════════════════════════════════════════════════════════ */
+const GoalGrades = (() => {
+  function computeIntensity(current, target, examDate) {
+    if (!target || !current) return 0;
+    const gap = target - current;
+    if (gap <= 0) return 1;
+    const days = examDate ? Math.max(1, daysUntil(new Date(examDate))) : 90;
+    const daily = gap / days;
+    if (daily > 0.5) return 5;
+    if (daily > 0.3) return 4;
+    if (daily > 0.15) return 3;
+    if (daily > 0.05) return 2;
+    return 1;
+  }
+
+  function renderIntensity(containerId, level) {
+    const c = document.getElementById(containerId); if (!c) return;
+    const isHigh = level >= 4;
+    const isMed  = level === 3;
+    c.innerHTML = Array.from({length:5},(_,i) => {
+      const filled = i < level;
+      const cls = filled ? (isHigh?'filled high':(isMed?'filled warn':'filled')) : '';
+      return `<div class="intensity-dot ${cls}"></div>`;
+    }).join('');
+  }
+
+  function renderFeedback(id, current, target) {
+    const el = document.getElementById(id); if (!el) return;
+    const d = Lang.dict();
+    if (!current || !target) { el.style.display='none'; return; }
+    const gap = target - current;
+    let msg, cls;
+    if (gap <= 5) { msg = d.feedback_great; cls = ''; }
+    else if (gap <= 15) { msg = d.feedback_ok; cls = 'ok'; }
+    else { msg = d.feedback_push; cls = 'warn'; }
+    el.textContent = msg;
+    el.className = `goal-feedback ${cls}`;
+    el.style.display = '';
+  }
+
+  function updateQudurat() {
+    const current = parseFloat(document.getElementById('qudurat-current')?.value)||0;
+    const target  = parseFloat(document.getElementById('qudurat-target')?.value)||0;
+    const examDate = document.getElementById('qudurat-date')?.value;
+    const display = document.getElementById('qudurat-score-display');
+    if (display) display.textContent = target || '—';
+    const pct = target > 0 ? Math.min(100, Math.round((current/target)*100)) : 0;
+    const pctEl = document.getElementById('qudurat-pct');
+    const prog  = document.getElementById('qudurat-prog');
+    if (pctEl) pctEl.textContent = pct+'%';
+    if (prog) prog.style.width = pct+'%';
+    const intensity = computeIntensity(current, target, examDate);
+    renderIntensity('qudurat-intensity', intensity);
+    renderFeedback('qudurat-feedback', current, target);
+  }
+
+  function updateTahsili() {
+    const current = parseFloat(document.getElementById('tahsili-current')?.value)||0;
+    const target  = parseFloat(document.getElementById('tahsili-target')?.value)||0;
+    const examDate = document.getElementById('tahsili-date')?.value;
+    const display = document.getElementById('tahsili-score-display');
+    if (display) display.textContent = target || '—';
+    const pct = target > 0 ? Math.min(100, Math.round((current/target)*100)) : 0;
+    const pctEl = document.getElementById('tahsili-pct');
+    const prog  = document.getElementById('tahsili-prog');
+    if (pctEl) pctEl.textContent = pct+'%';
+    if (prog) prog.style.width = pct+'%';
+    const intensity = computeIntensity(current, target, examDate);
+    renderIntensity('tahsili-intensity', intensity);
+    renderFeedback('tahsili-feedback', current, target);
+  }
+
+  function saveGoal(type) {
+    if (AppMode.get() !== 'account') { Auth.showSignup(); return; }
+    const d = Lang.dict();
+    // Persist to localStorage
+    const key = 'tadarruj_goal_'+type;
+    const current = document.getElementById(type+'-current')?.value;
+    const target  = document.getElementById(type+'-target')?.value;
+    const date    = document.getElementById(type+'-date')?.value;
+    localStorage.setItem(key, JSON.stringify({current, target, date}));
+    Toast.success(Lang.get()==='ar'?'✓ تم حفظ الهدف':'✓ Goal saved', 2500);
+  }
+
+  function loadSaved() {
+    ['qudurat','tahsili'].forEach(type => {
+      const saved = localStorage.getItem('tadarruj_goal_'+type);
+      if (!saved) return;
+      try {
+        const {current, target, date} = JSON.parse(saved);
+        const c = document.getElementById(type+'-current');
+        const t = document.getElementById(type+'-target');
+        const d = document.getElementById(type+'-date');
+        if (c && current) c.value = current;
+        if (t && target) t.value = target;
+        if (d && date) d.value = date;
+      } catch(e) {}
+    });
+    updateQudurat(); updateTahsili();
+  }
+
+  function init() {
+    ['current','target','date'].forEach(f => {
+      document.getElementById('qudurat-'+f)?.addEventListener('input', updateQudurat);
+      document.getElementById('tahsili-'+f)?.addEventListener('input', updateTahsili);
+    });
+    document.getElementById('save-qudurat')?.addEventListener('click', () => saveGoal('qudurat'));
+    document.getElementById('save-tahsili')?.addEventListener('click', () => saveGoal('tahsili'));
+    loadSaved();
+  }
+
+  return { init, updateQudurat, updateTahsili, loadSaved };
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   STUDY PLANNER
+   Generates a phased study plan based on user inputs.
+   Formula assumptions (documented):
+     - Learning:  50% of hours (or 60% if difficulty=hard)
+     - Practice:  25% of hours
+     - Revision:  15% of hours
+     - Mock:      10% of hours (min 1 day)
+     - Buffer:    10% of total days
+   ═══════════════════════════════════════════════════════════ */
+const PlannerPage = (() => {
+  let currentPlan = null;
+
+  function generatePlan(missedDays = 0) {
+    const lang = Lang.get();
+    const d = Lang.dict();
+    const subject    = document.getElementById('plan-subject')?.value.trim() || (lang==='ar'?'المادة':'Subject');
+    const examDateStr = document.getElementById('plan-exam-date')?.value;
+    const totalHours = parseFloat(document.getElementById('plan-hours')?.value)||40;
+    let   dailyHours  = parseFloat(document.getElementById('plan-daily')?.value)||2;
+    const difficulty  = document.getElementById('plan-difficulty')?.value || 'medium';
+    const targetGrade = parseFloat(document.getElementById('plan-target')?.value)||80;
+
+    if (!examDateStr) {
+      Toast.warn(lang==='ar'?'يرجى إدخال تاريخ الاختبار':'Please enter the exam date', 3000);
+      return;
+    }
+
+    const examDate = new Date(examDateStr);
+    const today = new Date(); today.setHours(0,0,0,0);
+    let daysAvail = Math.max(1, Math.round((examDate - today) / 86400000)) - missedDays;
+    if (daysAvail < 1) {
+      Toast.error(lang==='ar'?'لا يوجد وقت كافٍ للخطة':'Not enough days for a plan', 3000);
+      return;
+    }
+
+    // Adjust intensity by difficulty and target
+    const diffMult = difficulty==='hard'?1.2:difficulty==='easy'?0.85:1;
+    const adjustedHours = totalHours * diffMult;
+
+    // Buffer
+    const bufferDays = Math.max(1, Math.floor(daysAvail * 0.1));
+    const studyDays = daysAvail - bufferDays;
+
+    // Phase splits
+    const phaseSplit = { learn:0.5, practice:0.25, revision:0.15, mock:0.1 };
+    if (difficulty === 'hard') { phaseSplit.learn=0.55; phaseSplit.practice=0.25; phaseSplit.revision=0.15; phaseSplit.mock=0.05; }
+
+    const phases = [
+      { key:'learn',    daysCount: Math.max(1, Math.round(studyDays * phaseSplit.learn)),    hoursPerDay: dailyHours, cssClass:'phase-learn',    iconClass:'phase-learn',    icon:'📖' },
+      { key:'practice', daysCount: Math.max(1, Math.round(studyDays * phaseSplit.practice)), hoursPerDay: dailyHours, cssClass:'phase-practice', iconClass:'phase-practice', icon:'✏️' },
+      { key:'revision', daysCount: Math.max(1, Math.round(studyDays * phaseSplit.revision)), hoursPerDay: Math.max(1, dailyHours*0.8), cssClass:'phase-revision', iconClass:'phase-revision', icon:'🔄' },
+      { key:'mock',     daysCount: Math.max(1, Math.round(studyDays * phaseSplit.mock)),     hoursPerDay: dailyHours, cssClass:'phase-mock',     iconClass:'phase-mock',     icon:'📝' },
+      { key:'buffer',   daysCount: bufferDays, hoursPerDay: 0, cssClass:'phase-buffer', iconClass:'phase-buffer', icon:'☕' },
+    ];
+
+    // Assign dates
+    let cursor = new Date(today);
+    if (missedDays > 0) cursor.setDate(cursor.getDate() + missedDays);
+    phases.forEach(ph => {
+      ph.startDate = new Date(cursor);
+      cursor.setDate(cursor.getDate() + ph.daysCount);
+      ph.endDate = new Date(cursor); ph.endDate.setDate(ph.endDate.getDate()-1);
+    });
+
+    currentPlan = { subject, phases, examDate, totalHours, dailyHours, daysAvail, bufferDays };
+    renderPlan(currentPlan);
+  }
+
+  function renderPlan(plan) {
+    const lang = Lang.get();
+    const d = Lang.dict();
+    const summaryEl = document.getElementById('plan-summary');
+    const phasesEl  = document.getElementById('plan-phases');
+    const resultEl  = document.getElementById('planner-result');
+    const emptyEl   = document.getElementById('planner-empty');
+    const recalcEl  = document.getElementById('recalc-bar');
+    if (!summaryEl || !phasesEl || !resultEl || !emptyEl) return;
+
+    emptyEl.style.display = 'none';
+    resultEl.style.display = '';
+    if (recalcEl) recalcEl.style.display = '';
+
+    const totalStudyDays = plan.phases.slice(0,-1).reduce((acc,p)=>acc+p.daysCount,0);
+    summaryEl.innerHTML = `
+      <div class="plan-summary-stat"><span>${plan.subject}</span><span style="font-size:1rem">${lang==='ar'?'المادة':'Subject'}</span></div>
+      <div class="plan-summary-stat"><span>${d.plan_days_label}</span><span>${totalStudyDays}</span></div>
+      <div class="plan-summary-stat"><span>${d.plan_hours_label}</span><span>${Math.round(plan.totalHours)}</span></div>
+      <div class="plan-summary-stat"><span>${d.plan_phases_label}s</span><span>${plan.phases.length}</span></div>
+    `;
+
+    phasesEl.innerHTML = plan.phases.map(ph => {
+      const phaseLabel = d['phase_'+ph.key] || ph.key;
+      const startStr = formatDate(ph.startDate, lang);
+      const endStr   = formatDate(ph.endDate,   lang);
+      // Sample days (first 3)
+      const sampleDays = [];
+      for (let i=0; i<Math.min(3, ph.daysCount); i++) {
+        const day = new Date(ph.startDate); day.setDate(day.getDate()+i);
+        const label = ph.key==='buffer' ? (lang==='ar'?'استراحة / مراجعة خفيفة':'Rest / light review') :
+                      ph.key==='mock' ? (lang==='ar'?`اختبار تجريبي ${i+1}`:`Mock exam ${i+1}`) :
+                      (lang==='ar'?`جلسة دراسة ${i+1}`:`Study session ${i+1}`);
+        sampleDays.push({ date:day, label, hours:ph.hoursPerDay });
+      }
+      const moreDays = ph.daysCount > 3 ? `<div class="plan-day" style="color:var(--text3);font-size:.76rem;padding-inline-start:.6rem">... ${lang==='ar'?`+${ph.daysCount-3} أيام أخرى`:`+${ph.daysCount-3} more days`}</div>` : '';
+      return `<div class="plan-phase">
+        <div class="plan-phase-header">
+          <div class="plan-phase-icon ${ph.iconClass}">${ph.icon}</div>
+          <div>
+            <h3>${phaseLabel}</h3>
+            <div class="plan-phase-dates">${d.plan_start} ${startStr} — ${d.plan_end} ${endStr} (${ph.daysCount} ${lang==='ar'?'أيام':'days'})</div>
+          </div>
+        </div>
+        <div class="plan-days">
+          ${sampleDays.map(day=>`<div class="plan-day">
+            <span class="plan-day-date">${formatDate(day.date,lang)}</span>
+            <span class="plan-day-task">${day.label}</span>
+            ${ph.hoursPerDay > 0 ? `<span class="plan-day-hours">${day.hours}h</span>` : ''}
+          </div>`).join('')}
+          ${moreDays}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function savePlan() {
+    if (AppMode.get() !== 'account') { Auth.showSignup(); return; }
+    if (!currentPlan) return;
+    localStorage.setItem('tadarruj_plan', JSON.stringify({
+      subject: currentPlan.subject,
+      savedAt: Date.now(),
+      daysAvail: currentPlan.daysAvail,
+    }));
+    Toast.success(Lang.get()==='ar'?'✓ تم حفظ الخطة':'✓ Plan saved', 2500);
+  }
+
+  function init() {
+    document.getElementById('generate-plan')?.addEventListener('click', () => generatePlan(0));
+    document.getElementById('recalc-btn')?.addEventListener('click', () => {
+      const missed = parseInt(document.getElementById('missed-days')?.value)||0;
+      generatePlan(missed);
+      Toast.info(Lang.get()==='ar'?'تم إعادة الحساب':'Plan recalculated', 2500);
+    });
+    document.getElementById('save-plan-btn')?.addEventListener('click', savePlan);
+  }
+
+  function refresh() { if (currentPlan) renderPlan(currentPlan); }
+  return { init, refresh };
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   3-YEAR ROADMAP
+   Generates based on grade, city, career, target uni.
+   ═══════════════════════════════════════════════════════════ */
+const RoadmapPage = (() => {
+  let currentRoadmap = null;
+
+  function buildRoadmap(grade, city, career, uni) {
+    const lang = Lang.get();
+    const d = Lang.dict();
+    const gradeNum = parseInt(grade) || 10;
+
+    // Career-specific content
+    const careerExams = {
+      medicine:    { ar:['MCAT تجريبي','اختبار القدرات'], en:['Mock MCAT prep','Qudurat prep'] },
+      engineering: { ar:['اختبار STEP','مسابقات الهندسة'], en:['STEP exam','Engineering competitions'] },
+      cs:          { ar:['مسابقات البرمجة','CS50'], en:['Competitive programming','CS50'] },
+      business:    { ar:['اختبار GMAT تمهيدي','مسابقات ريادة الأعمال'], en:['GMAT prep','Entrepreneurship competitions'] },
+    };
+    const cExtra = career ? (careerExams[career]||{ar:[],en:[]})[lang] : [];
+
+    const years = [];
+    let y = gradeNum;
+    const yearCount = y >= 12 ? 3 : (y === 11 ? 3 : 3);
+
+    for (let i=0; i<yearCount; i++, y++) {
+      const yearLabel = y <= 12
+        ? (lang==='ar'?`الصف ${['العاشر','الحادي عشر','الثاني عشر'][Math.min(y-10,2)]}`:`Grade ${Math.min(y,12)}`)
+        : (lang==='ar'?'السنة التحضيرية':'Prep Year');
+
+      const focus = i===0
+        ? (lang==='ar'?['قياس المستوى الحالي','بناء خطة دراسية أسبوعية','متابعة المواعيد المهمة']:['Baseline assessment','Build weekly study schedule','Track key deadlines'])
+        : i===1
+        ? (lang==='ar'?['التحضير المكثف للقدرات','تحديد الجامعات المستهدفة','التسجيل في دورات IELTS']:['Intensive Qudurat prep','Research target universities','Start IELTS preparation'])
+        : (lang==='ar'?['اختبار التحصيلي النهائي','تقديم طلبات الجامعات','استكمال متطلبات القبول']:['Final Tahsili exam','Submit university applications','Complete admission requirements']);
+
+      const exams = i===0
+        ? (lang==='ar'?['اختبار تجريبي للقدرات','اختبار مستوى IELTS']:['Qudurat mock exam','IELTS level test'])
+        : i===1
+        ? (lang==='ar'?['القدرات الدورة الأولى','التحصيلي المبكر']:['Qudurat Round 1','Early Tahsili'])
+        : (lang==='ar'?['القدرات الدورة الثانية','التحصيلي النهائي','IELTS']:['Qudurat Round 2','Final Tahsili','IELTS']);
+
+      const milestones = i===0
+        ? (lang==='ar'?['📋 إعداد خارطة الطريق','🎯 تحديد الأهداف']:['📋 Create roadmap','🎯 Set goals'])
+        : i===1
+        ? (lang==='ar'?['📚 ٥٠٪ من خطة الدراسة','🏆 أول مسابقة أكاديمية']:['📚 50% of study plan','🏆 First academic competition'])
+        : (lang==='ar'?['🎓 تقديم الجامعة',`🌟 هدف: قبول في ${uni||'الجامعة المستهدفة'}`]:['🎓 University application',`🌟 Goal: Admission to ${uni||'target university'}`]);
+
+      const volunteer = i===0
+        ? (lang==='ar'?['العمل التطوعي (٢٠ ساعة)','برنامج صيفي']:['Volunteer work (20 hrs)','Summer program'])
+        : i===1
+        ? (lang==='ar'?['برنامج تدريبي','تطوع في مجال التخصص']:['Internship program','Field-specific volunteering'])
+        : (lang==='ar'?['قيادة مشروع تطوعي','بناء ملف شخصي']:['Lead a volunteer project','Build personal portfolio']);
+
+      const applications = i < 2 ? [] :
+        (lang==='ar'?['مارس – مايو: تقديم مبكر','أغسطس – سبتمبر: باب القبول الرئيسي']:['Mar–May: Early admission','Aug–Sep: Main application window']);
+
+      years.push({ label: yearLabel, focus, exams:[...exams,...(i>0?cExtra:[])], milestones, volunteer, applications });
+    }
+    return years;
+  }
+
+  function render() {
+    const lang = Lang.get();
+    const d = Lang.dict();
+    const grade   = document.getElementById('rm-grade')?.value || '10';
+    const city    = document.getElementById('rm-city')?.value  || '';
+    const career  = document.getElementById('rm-career')?.value || '';
+    const uni     = document.getElementById('rm-uni')?.value.trim() || '';
+
+    const years = buildRoadmap(grade, city, career, uni);
+    currentRoadmap = years;
+
+    const timeline = document.getElementById('roadmap-timeline');
+    const empty    = document.getElementById('roadmap-empty');
+    const saveBtn  = document.getElementById('save-roadmap-btn');
+    if (!timeline || !empty) return;
+
+    empty.style.display = 'none';
+    timeline.style.display = '';
+    if (saveBtn) saveBtn.style.display = '';
+
+    const dotLabels = lang==='ar' ? ['١','٢','٣'] : ['1','2','3'];
+    timeline.innerHTML = years.map((yr, idx) => `
+      <div class="roadmap-year-block">
+        <div class="roadmap-year-dot">${dotLabels[idx]||idx+1}</div>
+        <div class="roadmap-year-content">
+          <h3>${yr.label}</h3>
+          <div class="roadmap-section">
+            <div class="roadmap-section-title">${d.rm_focus}</div>
+            <div class="roadmap-items">${yr.focus.map(f=>`<div class="roadmap-item">${f}</div>`).join('')}</div>
+          </div>
+          <div class="roadmap-section">
+            <div class="roadmap-section-title">${d.rm_exams}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:.3rem">${yr.exams.map(e=>`<span class="roadmap-milestone">${e}</span>`).join('')}</div>
+          </div>
+          <div class="roadmap-section">
+            <div class="roadmap-section-title">${d.rm_milestones}</div>
+            <div class="roadmap-items">${yr.milestones.map(m=>`<div class="roadmap-item">${m}</div>`).join('')}</div>
+          </div>
+          <div class="roadmap-section">
+            <div class="roadmap-section-title">${d.rm_volunteer}</div>
+            <div class="roadmap-items">${yr.volunteer.map(v=>`<div class="roadmap-item">${v}</div>`).join('')}</div>
+          </div>
+          ${yr.applications.length ? `<div class="roadmap-section">
+            <div class="roadmap-section-title">${d.rm_applications}</div>
+            <div class="roadmap-items">${yr.applications.map(a=>`<div class="roadmap-item">${a}</div>`).join('')}</div>
+          </div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function save() {
+    if (AppMode.get() !== 'account') { Auth.showSignup(); return; }
+    if (!currentRoadmap) return;
+    localStorage.setItem('tadarruj_roadmap', JSON.stringify({ savedAt: Date.now(), yearCount: currentRoadmap.length }));
+    Toast.success(Lang.get()==='ar'?'✓ تم حفظ خارطة الطريق':'✓ Roadmap saved', 2500);
+  }
+
+  function init() {
+    document.getElementById('generate-roadmap')?.addEventListener('click', render);
+    document.getElementById('save-roadmap-btn')?.addEventListener('click', save);
+  }
+
+  function refresh() { if (currentRoadmap) render(); }
+  return { init, refresh };
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   DASHBOARD ORCHESTRATOR
+   ═══════════════════════════════════════════════════════════ */
+const Dashboard = {
+  onLangChange(lang) {
+    RadarPage.refresh();
+    DatesPage.render();
+    GoalGrades.updateQudurat();
+    GoalGrades.updateTahsili();
+    PlannerPage.refresh();
+    RoadmapPage.refresh();
+  },
+  refresh() {
+    AppMode.init();
+    this.onLangChange(Lang.get());
+  },
+  init() {
+    Lang.init();
+    document.getElementById('lang-btn')?.addEventListener('click', () => Lang.toggle());
+    Nav.init();
+    AppMode.init();
+    Auth.init();
+    RadarPage.init();
+    DatesPage.init();
+    GoalGrades.init();
+    PlannerPage.init();
+    RoadmapPage.init();
+    window.Toast = Toast;
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  Dashboard.init();
+
+  // Listen for auth state from parent React app
+  window.addEventListener('message', (e) => {
+    if (e.data?.type === 'TADARRUJ_AUTH') {
+      if (e.data.mode === 'account' && e.data.profile) {
+        AppMode.setAccount(e.data.profile);
+        Dashboard.refresh();
+      } else {
+        AppMode.setGuest();
+        Dashboard.refresh();
+      }
+    }
+  });
+});
+
+// Override Auth redirect to use postMessage to parent
+Auth.showSignup = function() { window.parent.postMessage({ type: 'TADARRUJ_GO_HOME' }, '*'); };
+Auth.showLogin  = function() { window.parent.postMessage({ type: 'TADARRUJ_GO_HOME' }, '*'); };
+</script>
+</body>
+</html>
