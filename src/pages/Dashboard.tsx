@@ -1,44 +1,50 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 const Dashboard = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isGuest = searchParams.get("guest") === "1";
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && !isGuest) {
       navigate("/login", { replace: true });
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, isGuest]);
 
   // Pass user info to dashboard iframe via postMessage
   useEffect(() => {
-    if (!user) return;
-
     const iframe = document.getElementById("dashboard-iframe") as HTMLIFrameElement;
     if (!iframe) return;
 
     const sendUserData = () => {
-      const profile = {
-        name: user.user_metadata?.full_name || user.email?.split("@")[0] || "",
-        email: user.email || "",
-        grade: user.user_metadata?.grade || "",
-        city: user.user_metadata?.city || "",
-        confirmed: true,
-      };
-      iframe.contentWindow?.postMessage(
-        { type: "TADARRUJ_AUTH", mode: "account", profile },
-        "*"
-      );
+      if (user) {
+        const profile = {
+          name: user.user_metadata?.full_name || user.email?.split("@")[0] || "",
+          email: user.email || "",
+          grade: user.user_metadata?.grade || "",
+          city: user.user_metadata?.city || "",
+          confirmed: true,
+        };
+        iframe.contentWindow?.postMessage(
+          { type: "TADARRUJ_AUTH", mode: "account", profile },
+          "*"
+        );
+      } else if (isGuest) {
+        iframe.contentWindow?.postMessage(
+          { type: "TADARRUJ_AUTH", mode: "guest", profile: { name: "ضيف", email: "", confirmed: false } },
+          "*"
+        );
+      }
     };
 
     iframe.addEventListener("load", sendUserData);
-    // Also send immediately if already loaded
     sendUserData();
 
     return () => iframe.removeEventListener("load", sendUserData);
-  }, [user]);
+  }, [user, isGuest]);
 
   const handleIframeMessage = (e: MessageEvent) => {
     if (e.data?.type === "TADARRUJ_LOGOUT") {
@@ -54,7 +60,7 @@ const Dashboard = () => {
     return () => window.removeEventListener("message", handleIframeMessage);
   }, []);
 
-  if (loading) {
+  if (loading && !isGuest) {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc" }}>
         <p style={{ color: "#64748b", fontFamily: "'Segoe UI',system-ui,sans-serif" }}>جاري التحميل...</p>

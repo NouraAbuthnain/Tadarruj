@@ -4490,46 +4490,36 @@ function translatePlaceholders(lang) {
 <script>
 // Override auth actions to redirect to React auth pages
 document.addEventListener('DOMContentLoaded', () => {
-  // Intercept all CTA buttons that trigger signup
-  document.querySelectorAll('[data-action="signup"], .hero-cta1, #cta-main-btn, #dash-explore-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      window.parent.location.href = '/signup';
-    }, true);
-  });
-
-  // Override the signup/login form submissions
-  const origSignupSubmit = document.getElementById('signup-submit');
-  if (origSignupSubmit) {
-    origSignupSubmit.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      window.parent.location.href = '/signup';
-    }, true);
-  }
-  const origLoginSubmit = document.getElementById('login-submit');
-  if (origLoginSubmit) {
-    origLoginSubmit.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      window.parent.location.href = '/login';
-    }, true);
-  }
-
-  // Override hero CTA buttons
-  setTimeout(() => {
-    document.querySelectorAll('.btn-primary').forEach(btn => {
-      const text = btn.textContent?.trim();
-      if (text && (text.includes('ابدأ مجاناً') || text.includes('Free Start') || text.includes('إنشاء الحساب') || text.includes('Sign Up') || text.includes('ابدأ مجاناً الآن') || text.includes('Start Free Now'))) {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          window.parent.location.href = '/signup';
-        }, true);
-      }
+  function hijack(selector, route) {
+    document.querySelectorAll(selector).forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.parent.location.href = route;
+      }, true);
     });
-  }, 200);
+  }
+
+  // All "ابدأ مجاناً" / signup buttons
+  hijack('.js-open-signup', '/signup');
+  hijack('#signup-submit', '/signup');
+  hijack('#lock-to-signup', '/signup');
+  hijack('#lock-cta-create', '/signup');
+
+  // Login buttons
+  hijack('#login-submit', '/login');
+  hijack('#signup-to-login', '/login');
+  hijack('#lock-cta-login', '/login');
+
+  // "استكشف كضيف" → dashboard in guest mode
+  const guestBtn = document.getElementById('hero-guest-btn');
+  if (guestBtn) {
+    guestBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.parent.location.href = '/dashboard?guest=1';
+    }, true);
+  }
 });
 </script>
 </body>
